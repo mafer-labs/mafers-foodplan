@@ -4,34 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maria's Protocol</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            document.getElementById('root').innerHTML = 
+            '<div style="padding:20px; color:red; font-size:20px;">Something broke: ' + message + '</div>';
+        };
+    </script>
 </head>
 <body class="bg-slate-50">
-    <div id="root"></div>
+    
+    <div id="root" class="p-10 text-center text-slate-500 font-bold">
+        Loading Maria's Protocol...
+    </div>
 
     <script type="text/babel">
-        // --- DATA SECTION ---
-        // This is where we store your menu and rules based on the documents.
+        // --- DATA START ---
         const protocolData = {
             userSettings: {
                 dailyRations: {
-                    [cite_start]proteins: { total: 10, unit: "portions", color: "bg-purple-100 text-purple-800" }, // [cite: 14]
-                    [cite_start]starches: { total: 5, unit: "portions", color: "bg-blue-100 text-blue-800" }, // [cite: 16]
-                    [cite_start]vegetables: { total: 2, unit: "cups", color: "bg-green-100 text-green-800" }, // [cite: 16]
-                    [cite_start]fruits: { total: 3, unit: "portions", color: "bg-yellow-100 text-yellow-800" }, // [cite: 16]
-                    [cite_start]fats: { total: 2, unit: "portions", color: "bg-orange-100 text-orange-800" } // [cite: 16]
+                    proteins: { total: 10, unit: "portions", color: "bg-purple-100 text-purple-800" },
+                    starches: { total: 5, unit: "portions", color: "bg-blue-100 text-blue-800" },
+                    vegetables: { total: 2, unit: "cups", color: "bg-green-100 text-green-800" },
+                    fruits: { total: 3, unit: "portions", color: "bg-yellow-100 text-yellow-800" },
+                    fats: { total: 2, unit: "portions", color: "bg-orange-100 text-orange-800" }
                 },
                 morningRoutine: [
-                    [cite_start]// [cite: 41]
                     { id: 'm1', task: "Glutamina (Glutanet/Glutapack)", time: "Before Breakfast", completed: false },
                     { id: 'm2', task: "Probiotic (Coll Vital/Colozin)", time: "20 min before meal", completed: false }
                 ]
             },
             days: [
-                [cite_start]// DAY 1 [cite: 1, 3, 5]
                 {
                     dayId: 1,
                     meals: {
@@ -40,7 +50,6 @@
                         dinner: { protein: "Carne molida en Hamburguesa", carb: "Casabe", veggie: "Tomate, Lechuga, Pepino" }
                     }
                 },
-                [cite_start]// DAY 2 [cite: 1, 3, 5]
                 {
                     dayId: 2,
                     meals: {
@@ -49,7 +58,6 @@
                         dinner: { protein: "Ensalada de Atun (90g)", carb: "Arepa pequeña", veggie: "Cebolla y tomate" }
                     }
                 },
-                [cite_start]// DAY 3 [cite: 1, 3, 5]
                 {
                     dayId: 3,
                     meals: {
@@ -58,8 +66,7 @@
                         dinner: { protein: "Carne molida (4 cdas) + crema", carb: "Tortilla de maíz (Burrito)", veggie: "Guacamole (2 cdas)" }
                     }
                 },
-                 [cite_start]// DAY 4 [cite: 1, 3, 5]
-                 {
+                {
                     dayId: 4,
                     meals: {
                         breakfast: { protein: "Carne Molida sin grasa", carb: "Arepa con Ajonjolí", fat: "Aguacate (1 trozo)", drink: "Té" },
@@ -67,8 +74,7 @@
                         dinner: { protein: "Jamon y queso Mozzarella bufala", carb: "Tortilla de platano", veggie: "Vegetales" }
                     }
                 },
-                 [cite_start]// DAY 5 [cite: 1, 3, 5]
-                 {
+                {
                     dayId: 5,
                     meals: {
                         breakfast: { protein: "Ensalada de Atún (6 cdas)", carb: "Casabe (60g)", fat: "Aceite en ensalada", drink: "Té" },
@@ -76,12 +82,11 @@
                         dinner: { protein: "Buñuelos de Yuca (Air Fryer)", carb: "Yuca (included)", veggie: "Vegetales al gusto" }
                     }
                 }
-                // (We can add Days 6-10 easily later!)
             ]
         };
+        // --- DATA END ---
 
-        // --- APP COMPONENTS ---
-        
+        // --- COMPONENTS ---
         const Card = ({ children, title }) => (
             <div className="bg-white rounded-2xl shadow-sm p-5 mb-4">
                 {title && <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{title}</h2>}
@@ -94,8 +99,9 @@
             const [rations, setRations] = React.useState(protocolData.userSettings.dailyRations);
             const [morningTasks, setMorningTasks] = React.useState(protocolData.userSettings.morningRoutine);
 
-            // Logic to find current menu, defaults to Day 1 if missing
-            const dayData = protocolData.days.find(d => d.dayId === currentDay) || protocolData.days[0];
+            // Safer data fetching
+            let dayData = protocolData.days.find(d => d.dayId === currentDay);
+            if (!dayData) dayData = protocolData.days[0];
             const menu = dayData.meals;
 
             const toggleTask = (id) => {
@@ -180,10 +186,10 @@
                         <div className="mb-6">
                             <h3 className="text-sm font-bold text-orange-500 uppercase mb-2">Breakfast</h3>
                             <div className="bg-orange-50 p-3 rounded-lg border border-orange-100">
-                                <p className="font-medium text-slate-800">{menu?.breakfast?.protein}</p>
-                                <p className="text-sm text-slate-600">+ {menu?.breakfast?.carb}</p>
-                                <p className="text-sm text-slate-600">+ {menu?.breakfast?.fat}</p>
-                                {menu?.breakfast?.drink && <p className="text-xs text-orange-700 mt-2 border-t border-orange-200 pt-2">☕ {menu.breakfast.drink}</p>}
+                                <p className="font-medium text-slate-800">{menu && menu.breakfast ? menu.breakfast.protein : 'Loading...'}</p>
+                                <p className="text-sm text-slate-600">+ {menu && menu.breakfast ? menu.breakfast.carb : ''}</p>
+                                <p className="text-sm text-slate-600">+ {menu && menu.breakfast ? menu.breakfast.fat : ''}</p>
+                                {menu && menu.breakfast && menu.breakfast.drink && <p className="text-xs text-orange-700 mt-2 border-t border-orange-200 pt-2">☕ {menu.breakfast.drink}</p>}
                             </div>
                         </div>
 
@@ -191,9 +197,9 @@
                         <div className="mb-6">
                             <h3 className="text-sm font-bold text-green-600 uppercase mb-2">Lunch</h3>
                             <div className="bg-green-50 p-3 rounded-lg border border-green-100">
-                                <p className="font-medium text-slate-800">{menu?.lunch?.protein}</p>
-                                <p className="text-sm text-slate-600">+ {menu?.lunch?.carb}</p>
-                                <p className="text-sm text-slate-600">+ {menu?.lunch?.veggie}</p>
+                                <p className="font-medium text-slate-800">{menu && menu.lunch ? menu.lunch.protein : 'Loading...'}</p>
+                                <p className="text-sm text-slate-600">+ {menu && menu.lunch ? menu.lunch.carb : ''}</p>
+                                <p className="text-sm text-slate-600">+ {menu && menu.lunch ? menu.lunch.veggie : ''}</p>
                             </div>
                         </div>
 
@@ -201,9 +207,9 @@
                         <div>
                             <h3 className="text-sm font-bold text-blue-600 uppercase mb-2">Dinner</h3>
                             <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                                <p className="font-medium text-slate-800">{menu?.dinner?.protein}</p>
-                                <p className="text-sm text-slate-600">+ {menu?.dinner?.carb}</p>
-                                <p className="text-sm text-slate-600">+ {menu?.dinner?.veggie}</p>
+                                <p className="font-medium text-slate-800">{menu && menu.dinner ? menu.dinner.protein : 'Loading...'}</p>
+                                <p className="text-sm text-slate-600">+ {menu && menu.dinner ? menu.dinner.carb : ''}</p>
+                                <p className="text-sm text-slate-600">+ {menu && menu.dinner ? menu.dinner.veggie : ''}</p>
                             </div>
                         </div>
                     </Card>

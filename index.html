@@ -6,12 +6,13 @@
     <title>Plan Nutricional Mafer</title>
     <style>
         :root {
-            --primary: #4CAF50; /* Green for health/veggies */
-            --secondary: #FF9800; /* Orange for energy/fruits */
-            --accent: #2196F3; /* Blue for water/calm */
+            --primary: #4CAF50; /* Green */
+            --secondary: #FF9800; /* Orange */
+            --accent: #2196F3; /* Blue */
             --bg: #F5F7FA;
             --card: #ffffff;
             --text: #333333;
+            --done: #e0e0e0;
         }
         
         body {
@@ -19,22 +20,43 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding-bottom: 80px; /* Space for nav */
+            padding-bottom: 90px;
         }
 
         header {
             background: linear-gradient(135deg, var(--primary), #2E7D32);
             color: white;
-            padding: 20px;
-            text-align: center;
+            padding: 20px 20px 30px 20px;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         h1 { margin: 0; font-size: 1.5rem; }
-        h2 { font-size: 1.2rem; color: var(--primary); margin-bottom: 10px; }
-        p { margin: 5px 0; font-size: 0.95rem; }
+        p { margin: 5px 0; font-size: 0.9rem; opacity: 0.9; }
+
+        /* Language Switcher */
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        .lang-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            cursor: pointer;
+        }
+        .lang-btn.active { opacity: 1; text-decoration: underline; }
 
         /* Navigation */
         nav {
@@ -66,24 +88,9 @@
         /* Sections */
         .section { display: none; padding: 20px; animation: fadeIn 0.3s; }
         .section.active { display: block; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Cards */
-        .card {
-            background: var(--card);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border-left: 5px solid var(--primary);
-        }
-
-        .meal-title { font-weight: bold; color: #555; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
-        .meal-content { margin-top: 5px; font-size: 1rem; }
-        .note { font-size: 0.8rem; color: #666; font-style: italic; margin-top: 5px; }
-
-        /* Day Selector */
+        /* Day Scroller */
         .day-scroller {
             display: flex;
             overflow-x: auto;
@@ -100,213 +107,404 @@
             border-radius: 20px;
             white-space: nowrap;
             font-weight: bold;
+            position: relative;
         }
-        .day-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Tracker */
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0 15px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: inherit;
-        }
-        button.action-btn {
+        .day-btn.active { background: var(--primary); color: white; }
+        .day-btn.completed-day::after {
+            content: '✓';
+            font-size: 0.7rem;
+            position: absolute;
+            top: -5px;
+            right: -5px;
             background: var(--secondary);
             color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .log-entry {
-            border-left-color: var(--accent);
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Randomizer */
-        .random-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
+        /* Meal Cards with Checkbox Logic */
+        .card {
+            background: var(--card);
+            border-radius: 15px;
             padding: 15px;
-            width: 100%;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 0 #388E3C;
-            transition: transform 0.1s;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+            position: relative;
+            transition: background 0.3s;
+        }
+        
+        .card.checked {
+            background: #f0f0f0;
+            border-left-color: #bbb;
+        }
+        .card.checked .meal-title, .card.checked .meal-content {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        .check-circle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .card.checked .check-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .card.checked .check-circle::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: 0;
+            left: 5px;
+            font-size: 16px;
+        }
+
+        .meal-title { font-weight: bold; color: #555; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        .meal-content { margin-top: 5px; font-size: 1rem; padding-right: 30px; }
+        .note { font-size: 0.8rem; color: #666; font-style: italic; margin-top: 5px; }
+
+        /* Buttons & Inputs */
+        input, select, textarea {
+            width: 100%; padding: 10px; margin: 5px 0 15px 0;
+            border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit;
+        }
+        button.action-btn {
+            background: var(--secondary); color: white; border: none;
+            padding: 12px; width: 100%; border-radius: 10px;
+            font-size: 1rem; font-weight: bold; cursor: pointer;
+        }
+        .random-btn {
+            background: var(--primary); color: white; border: none; padding: 15px;
+            width: 100%; border-radius: 12px; font-size: 1.1rem; font-weight: bold;
+            margin-bottom: 20px; box-shadow: 0 4px 0 #388E3C; transition: transform 0.1s;
         }
         .random-btn:active { transform: translateY(4px); box-shadow: none; }
+        
+        .reset-btn {
+            background: none; border: 1px solid red; color: red;
+            padding: 10px; width: 100%; border-radius: 8px; margin-top: 20px;
+        }
 
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🍎 Plan Mafer</h1>
-        <p>1300 Kcal | Sin Gluten | Low FODMAP</p>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLang('es')">ES</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" onclick="setLang('no')">NO</button>
+        </div>
+        <h1 id="appTitle">🍎 Plan Mafer</h1>
+        <p id="appSubtitle">1300 Kcal | Sin Gluten | Low FODMAP</p>
     </header>
 
     <div id="plan" class="section active">
-        <div class="day-scroller" id="dayScroller">
-            </div>
+        <div class="day-scroller" id="dayScroller"></div>
         
-        <div id="menuContent">
+        <div id="cycle-info" style="text-align: center; margin-bottom: 10px; font-size: 0.85rem; color: #666;">
             </div>
+
+        <div id="menuContent"></div>
+        
+        <button class="reset-btn" onclick="resetCycle()" id="resetBtn">Reiniciar Ciclo (Start Over)</button>
     </div>
 
     <div id="ideas" class="section">
-        <h2>🎲 ¿Qué comemos hoy?</h2>
-        <p>Genera una combinación válida basada en tu lista de sustitutos.</p>
+        <h2 id="ideaTitle">🎲 ¿Qué comemos hoy?</h2>
+        <p id="ideaSub">Genera una combinación válida.</p>
         
-        <button class="random-btn" onclick="generateRandomMeal('lunch')">Generar Almuerzo</button>
-        <button class="random-btn" style="background-color: var(--accent); box-shadow: 0 4px 0 #1976D2;" onclick="generateRandomMeal('dinner')">Generar Cena</button>
+        <button class="random-btn" onclick="generateRandomMeal('lunch')" id="btnLunch">Generar Almuerzo</button>
+        <button class="random-btn" style="background-color: var(--accent); box-shadow: 0 4px 0 #1976D2;" onclick="generateRandomMeal('dinner')" id="btnDinner">Generar Cena</button>
         
         <div id="randomResult" class="card" style="display:none; border-left-color: var(--secondary);">
-            <div class="meal-title">Sugerencia:</div>
+            <div class="meal-title" id="resTitle">Sugerencia:</div>
             <div class="meal-content" id="randomText"></div>
-            <div class="note">Recuerda: Preparaciones a la plancha, horno o air fryer. ¡Cero frituras!</div>
+            <div class="note" id="resNote">Recuerda: Preparaciones a la plancha, horno o air fryer.</div>
         </div>
 
         <div class="card">
-            <h3>Recordatorios Clave</h3>
+            <h3 id="remTitle">Recordatorios</h3>
             <ul style="padding-left: 20px; font-size:0.9rem;">
-                <li><strong>Vegetales:</strong> 2 tazas cocidos (mejor digestión).</li>
-                <li><strong>Frutas:</strong> 3 raciones al día.</li>
-                <li><strong>Agua:</strong> 8 vasos (o infusiones de Toronjil/Anís).</li>
-                <li><strong>Prohibido:</strong> Azúcar, lácteos con lactosa, gluten.</li>
+                <li id="rem1"><strong>Vegetales:</strong> 2 tazas cocidos.</li>
+                <li id="rem2"><strong>Frutas:</strong> 3 raciones al día.</li>
+                <li id="rem3"><strong>Agua:</strong> 8 vasos.</li>
+                <li id="rem4"><strong>Prohibido:</strong> Azúcar, Lácteos con lactosa.</li>
             </ul>
         </div>
     </div>
 
     <div id="tracker" class="section">
-        <h2>📊 Diario de Salud</h2>
+        <h2 id="trackTitle">📊 Diario de Salud</h2>
         <div class="card">
-            <div class="meal-title">Nuevo Registro</div>
-            <label>Glucosa (mg/dL):</label>
-            <input type="number" id="glucose" placeholder="Ej: 95">
+            <div class="meal-title" id="newLogTitle">Nuevo Registro</div>
+            <label id="lblGluc">Glucosa (mg/dL):</label>
+            <input type="number" id="glucose" placeholder="95">
             
-            <label>Síntomas (Insulina/Hígado):</label>
-            <input type="text" id="symptoms" placeholder="Ej: Fatiga, antojos, dolor abdominal...">
+            <label id="lblSymp">Síntomas:</label>
+            <input type="text" id="symptoms" placeholder="...">
             
-            <label>Notas:</label>
-            <textarea id="notes" rows="2" placeholder="Comí algo fuera del plan?"></textarea>
+            <label id="lblNote">Notas:</label>
+            <textarea id="notes" rows="2" placeholder="..."></textarea>
             
-            <button class="action-btn" onclick="saveLog()">Guardar Registro</button>
+            <button class="action-btn" onclick="saveLog()" id="btnSave">Guardar Registro</button>
         </div>
 
-        <h3>Historial</h3>
+        <h3 id="histTitle">Historial</h3>
         <div id="logHistory"></div>
         <br>
-        <button onclick="clearLogs()" style="color: red; background: none; border: none; width: 100%; text-align: center;">Borrar Historial</button>
+        <button onclick="clearLogs()" style="color: red; background: none; border: none; width: 100%; text-align: center;" id="btnClear">Borrar Historial</button>
     </div>
 
     <nav>
         <button class="active" onclick="switchTab('plan', this)">
-            <span>📅</span> Plan
+            <span>📅</span> <span class="nav-text" data-key="navPlan">Plan</span>
         </button>
         <button onclick="switchTab('ideas', this)">
-            <span>👩‍🍳</span> Ideas
+            <span>👩‍🍳</span> <span class="nav-text" data-key="navIdeas">Ideas</span>
         </button>
         <button onclick="switchTab('tracker', this)">
-            <span>📈</span> Salud
+            <span>📈</span> <span class="nav-text" data-key="navHealth">Salud</span>
         </button>
     </nav>
 
     <script>
-        // --- DATA: MENUS FROM PDF [Source: 1-13] ---
-        const menuDays = {
-            1: {
-                desayuno: "Queso semi duro (90g) + Arepa Asada (100g) + Aguacate (1 trozo).",
-                almuerzo: "Pechuga empanizada (Air Fryer 90g) + Papas (2 unids) + Ensalada rallada.",
-                cena: "Hamburguesa de Carne Molida + Casabe + Tomate/Lechuga.",
-                snack: "Fruta (Jugo o trozos)."
+        // --- TRANSLATIONS CONFIG ---
+        let currentLang = 'es';
+        
+        const uiText = {
+            es: {
+                subtitle: "1300 Kcal | Sin Gluten | Low FODMAP",
+                cycleInfo: "Marca las comidas completadas para seguir tu progreso.",
+                reset: "Reiniciar Ciclo",
+                ideaTitle: "🎲 ¿Qué comemos hoy?",
+                ideaSub: "Genera una combinación válida.",
+                btnLunch: "Generar Almuerzo",
+                btnDinner: "Generar Cena",
+                resTitle: "Sugerencia",
+                resNote: "Recuerda: Preparaciones a la plancha, horno o air fryer.",
+                remTitle: "Recordatorios",
+                rem1: "<strong>Vegetales:</strong> 2 tazas cocidos (mejor digestión).",
+                rem2: "<strong>Frutas:</strong> 3 raciones al día.",
+                rem3: "<strong>Agua:</strong> 8 vasos (o infusiones).",
+                rem4: "<strong>Prohibido:</strong> Azúcar, lácteos con lactosa.",
+                trackTitle: "📊 Diario de Salud",
+                newLog: "Nuevo Registro",
+                lblGluc: "Glucosa (mg/dL):",
+                lblSymp: "Síntomas (Insulina/Hígado):",
+                lblNote: "Notas:",
+                btnSave: "Guardar Registro",
+                histTitle: "Historial",
+                btnClear: "Borrar Historial",
+                navPlan: "Plan",
+                navIdeas: "Ideas",
+                navHealth: "Salud",
+                mealB: "Desayuno",
+                mealL: "Almuerzo",
+                mealD: "Cena",
+                mealS: "Merienda",
+                alertSaved: "Registro guardado ✨",
+                alertReset: "¿Reiniciar el ciclo de 10 días? Esto borrará tus marcas."
             },
-            2: {
-                desayuno: "Jamón de Pavo (3 reb) + Arepa de batata (1) + Alfalfa/Tomate.",
-                almuerzo: "Calabacines rellenos carne molida (90g) + Arroz Blanco.",
-                cena: "Ensalada de Atún (90g) + Arepa pequeña + Cebolla/Tomate.",
-                snack: "Fruta + Galleta de arroz."
+            en: {
+                subtitle: "1300 Kcal | Gluten Free | Low FODMAP",
+                cycleInfo: "Check off meals to track your 10-day progress.",
+                reset: "Reset Cycle",
+                ideaTitle: "🎲 What to eat?",
+                ideaSub: "Generate a valid combo.",
+                btnLunch: "Generate Lunch",
+                btnDinner: "Generate Dinner",
+                resTitle: "Suggestion",
+                resNote: "Remember: Grilled, baked, or air fryer only.",
+                remTitle: "Reminders",
+                rem1: "<strong>Veggies:</strong> 2 cups cooked (better digestion).",
+                rem2: "<strong>Fruits:</strong> 3 portions per day.",
+                rem3: "<strong>Water:</strong> 8 glasses (or tea).",
+                rem4: "<strong>Forbidden:</strong> Sugar, lactose dairy.",
+                trackTitle: "📊 Health Log",
+                newLog: "New Entry",
+                lblGluc: "Glucose (mg/dL):",
+                lblSymp: "Symptoms (Insulin/Liver):",
+                lblNote: "Notes:",
+                btnSave: "Save Entry",
+                histTitle: "History",
+                btnClear: "Clear History",
+                navPlan: "Plan",
+                navIdeas: "Ideas",
+                navHealth: "Health",
+                mealB: "Breakfast",
+                mealL: "Lunch",
+                mealD: "Dinner",
+                mealS: "Snack",
+                alertSaved: "Entry saved ✨",
+                alertReset: "Reset the 10-day cycle? This will clear your checkmarks."
             },
-            3: {
-                desayuno: "Pollo en salsa (90g) + Papas rellenas (2 unids) + Aceite (1 cdta).",
-                almuerzo: "Atún al ajillo (90g) + Yuca sancochada + Ensalada de berros.",
-                cena: "Carne molida (4 cdas) + Tortilla de maíz (Burrito) + Guacamole.",
-                snack: "Fruta de preferencia."
-            },
-            4: {
-                desayuno: "Carne Molida sin grasa + Arepa con Ajonjolí + Aguacate en ensalada.",
-                almuerzo: "Arroz con pollo y vegetales + Ensalada.",
-                cena: "Jamón y Queso Mozzarella Búfala + Tortilla de plátano + Vegetales.",
-                snack: "Fruta."
-            },
-            5: {
-                desayuno: "Ensalada de Atún (6 cdas) + Casabe (60g).",
-                almuerzo: "Parrilla de Carne con vegetales + Bollitos + Ensalada Mixta.",
-                cena: "Buñuelos de Yuca (Air Fryer).",
-                snack: "Fruta."
-            },
-            6: {
-                desayuno: "Pollo esmechado (90g) + Tortillas de plátano verde/maduro + Margarina.",
-                almuerzo: "Asado Negro (90g) + Arroz (1 tz) + Ensalada Tomate/Pepino.",
-                cena: "Jamón de Pavo + Galletas de Arroz (2 paq) + Ensalada.",
-                snack: "Fruta."
-            },
-            7: {
-                desayuno: "Pavo (90g) + Crepes de harina de arroz + Margarina y vegetales.",
-                almuerzo: "Pescado al Horno (90g) + Casabe (40g) + Ensalada papa/zanahoria.",
-                cena: "Queso Amarillo + 1 reb Jamón + Yuca + Alfalfa.",
-                snack: "Fruta."
-            },
-            8: {
-                desayuno: "Pollo esmechado (90g) + Arepa asada (100g) + Aguacate.",
-                almuerzo: "Pollo a la plancha (90g) + Arroz (1 tz) + Brócoli con tomate.",
-                cena: "Tortilla calabacín / 2 papas / 2 Claras de Huevo + Jamón rallado.",
-                snack: "Fruta."
-            },
-            9: {
-                desayuno: "Plátano maduro horneado + Queso mozzarella búfala.",
-                almuerzo: "Hamburguesa carne (90g) + Pan sin gluten + Vegetales + 1 papa brava.",
-                cena: "Ensalada Capresa (30g Mozzarella Búfala) + Galleta soda.",
-                snack: "Té frío sin azúcar o Fruta."
-            },
-            10: {
-                desayuno: "Queso de cabra (90g) + Arepa mediana (100g) + Margarina.",
-                almuerzo: "Croquetas de pescado (Air Fryer 90g) + Arroz (1 tz).",
-                cena: "Sopa combinada de auyama/apio + Carne (90g).",
-                snack: "Jugo o Fruta."
+            no: {
+                subtitle: "1300 Kcal | Glutenfri | Lav FODMAP",
+                cycleInfo: "Merk måltider for å spore fremgangen din.",
+                reset: "Nullstill Syklus",
+                ideaTitle: "🎲 Hva skal vi spise?",
+                ideaSub: "Generer en gyldig kombinasjon.",
+                btnLunch: "Generer Lunsj",
+                btnDinner: "Generer Middag",
+                resTitle: "Forslag",
+                resNote: "Husk: Grillet, bakt eller air fryer.",
+                remTitle: "Påminnelser",
+                rem1: "<strong>Grønnsaker:</strong> 2 kopper kokt.",
+                rem2: "<strong>Frukt:</strong> 3 porsjoner per dag.",
+                rem3: "<strong>Vann:</strong> 8 glass (eller te).",
+                rem4: "<strong>Forbudt:</strong> Sukker, laktose.",
+                trackTitle: "📊 Helselogg",
+                newLog: "Ny Oppføring",
+                lblGluc: "Glukose (mg/dL):",
+                lblSymp: "Symptomer:",
+                lblNote: "Notater:",
+                btnSave: "Lagre",
+                histTitle: "Historikk",
+                btnClear: "Slett Historikk",
+                navPlan: "Plan",
+                navIdeas: "Ideer",
+                navHealth: "Helse",
+                mealB: "Frokost",
+                mealL: "Lunsj",
+                mealD: "Middag",
+                mealS: "Mellommåltid",
+                alertSaved: "Lagret ✨",
+                alertReset: "Nullstill 10-dagers syklusen?"
             }
         };
 
-        // --- DATA: SUBSTITUTION LISTS [Source: 17-24] ---
-        const foodLists = {
-            proteins: ["Pollo (90g)", "Carne Magra (90g)", "Pescado (90g)", "Lomo de Cerdo (90g)", "Atún (90g)", "Queso Búfala/Cabra (30g)", "2 Huevos (Max 3/sem)"],
-            starches: ["Arroz (1/2 taza)", "Quinoa (1/2 taza)", "Yuca sancochada", "Batata al horno", "Plátano maduro/verde", "Arepa (1/2 unidad)", "Pasta sin gluten"],
-            veggies: ["Calabacín", "Vainitas", "Zanahoria", "Espinacas", "Acelgas", "Berenjena", "Champiñones", "Brócoli (cuidado gases)"],
-            fats: ["Aguacate (1/8)", "Aceite de Oliva (1 cdta)", "Aceitunas (5 unid)", "Nueces (2 unid)", "Almendras (6 unid)"]
+        // --- MENU DATA (Trilingual) [Source: 1-13, 17-24] ---
+        const menuData = {
+            1: {
+                es: { b: "Queso semi duro (90g) + Arepa Asada (100g) + Aguacate.", l: "Pechuga empanizada (Air Fryer 90g) + Papas (2) + Ensalada.", d: "Hamburguesa de Carne Molida + Casabe + Tomate/Lechuga." },
+                en: { b: "Semi-hard cheese (90g) + Grilled Arepa (100g) + Avocado.", l: "Breaded Chicken (Air Fryer 90g) + Potatoes (2) + Salad.", d: "Beef Burger + Cassava Bread + Tomato/Lettuce." },
+                no: { b: "Halvfast ost (90g) + Grillet Arepa (100g) + Avokado.", l: "Panert kylling (Air Fryer 90g) + Poteter (2) + Salat.", d: "Hamburger + Kassavabrød + Tomat/Salat." }
+            },
+            2: {
+                es: { b: "Jamón de Pavo (3 reb) + Arepa de batata + Alfalfa.", l: "Calabacines rellenos carne molida (90g) + Arroz Blanco.", d: "Ensalada de Atún (90g) + Arepa pequeña + Cebolla." },
+                en: { b: "Turkey Ham (3 slices) + Sweet Potato Arepa + Alfalfa.", l: "Stuffed Zucchini with beef (90g) + White Rice.", d: "Tuna Salad (90g) + Small Arepa + Onion." },
+                no: { b: "Kalkunskinke (3 skiver) + Søtpotet Arepa + Alfalfa.", l: "Fylt Squash med kjøttdeig (90g) + Hvit ris.", d: "Tunfisksalat (90g) + Liten Arepa + Løk." }
+            },
+            3: {
+                es: { b: "Pollo en salsa (90g) + Papas rellenas (2) + Aceite.", l: "Atún al ajillo (90g) + Yuca sancochada + Berros.", d: "Carne molida (4 cdas) + Tortilla maíz (Burrito) + Guacamole." },
+                en: { b: "Chicken in sauce (90g) + Stuffed Potatoes (2) + Oil.", l: "Garlic Tuna (90g) + Boiled Cassava + Watercress.", d: "Minced Meat + Corn Tortilla (Burrito) + Guacamole." },
+                no: { b: "Kylling i saus (90g) + Fylte poteter (2) + Olje.", l: "Hvitløkstunfisk (90g) + Kokt Kassava + Brønnkarse.", d: "Kjøttdeig + Maistortilla (Burrito) + Guacamole." }
+            },
+            4: {
+                es: { b: "Carne Molida magra + Arepa con Ajonjolí + Aguacate.", l: "Arroz con pollo y vegetales + Ensalada.", d: "Jamón y Queso Mozzarella Búfala + Tortilla plátano." },
+                en: { b: "Lean Minced Meat + Sesame Arepa + Avocado.", l: "Chicken and Vegetable Rice + Salad.", d: "Ham & Buffalo Mozzarella + Plantain Tortilla." },
+                no: { b: "Mager kjøttdeig + Sesam Arepa + Avokado.", l: "Ris med kylling og grønnsaker + Salat.", d: "Skinke og bøffelmozzarella + Banantortilla." }
+            },
+            5: {
+                es: { b: "Ensalada de Atún (6 cdas) + Casabe (60g).", l: "Parrilla de Carne con vegetales + Bollitos + Ensalada.", d: "Buñuelos de Yuca (Air Fryer)." },
+                en: { b: "Tuna Salad (6 tbsp) + Cassava Bread (60g).", l: "Grilled Beef with veggies + Corn Dumplings + Salad.", d: "Cassava Fritters (Air Fryer)." },
+                no: { b: "Tunfisksalat (6 ss) + Kassavabrød (60g).", l: "Grillet biff med grønnsaker + Maisboller + Salat.", d: "Kassavaboller (Air Fryer)." }
+            },
+            6: {
+                es: { b: "Pollo esmechado (90g) + Tortilla plátano + Margarina.", l: "Asado Negro (90g) + Arroz (1 tz) + Ensalada.", d: "Jamón de Pavo + Galletas de Arroz (2 paq) + Ensalada." },
+                en: { b: "Shredded Chicken (90g) + Plantain Tortilla + Margarine.", l: "Asado Negro (Beef) + Rice (1 cup) + Salad.", d: "Turkey Ham + Rice Cakes (2 packs) + Salad." },
+                no: { b: "Revet kylling (90g) + Banantortilla + Margarin.", l: "Asado Negro (Oksekjøtt) + Ris (1 kopp) + Salat.", d: "Kalkunskinke + Riskaker (2 pakker) + Salat." }
+            },
+            7: {
+                es: { b: "Pavo (90g) + Crepes harina de arroz + Vegetales.", l: "Pescado al Horno (90g) + Casabe + Ensalada papa.", d: "Queso Amarillo + 1 reb Jamón + Yuca." },
+                en: { b: "Turkey (90g) + Rice Flour Crepes + Veggies.", l: "Baked Fish (90g) + Cassava Bread + Potato Salad.", d: "Yellow Cheese + 1 Ham slice + Cassava." },
+                no: { b: "Kalkun (90g) + Rismelpannekaker + Grønnsaker.", l: "Bakt fisk (90g) + Kassavabrød + Potetsalat.", d: "Gul ost + 1 skinkeskive + Kassava." }
+            },
+            8: {
+                es: { b: "Pollo esmechado (90g) + Arepa asada + Aguacate.", l: "Pollo a la plancha (90g) + Arroz + Brócoli/tomate.", d: "Tortilla calabacín / 2 claras huevo + Jamón rallado." },
+                en: { b: "Shredded Chicken (90g) + Grilled Arepa + Avocado.", l: "Grilled Chicken (90g) + Rice + Broccoli/Tomato.", d: "Zucchini Omelet / 2 egg whites + Grated Ham." },
+                no: { b: "Revet kylling (90g) + Grillet Arepa + Avokado.", l: "Grillet kylling (90g) + Ris + Brokkoli/Tomat.", d: "Squashomelett / 2 eggehviter + Revet skinke." }
+            },
+            9: {
+                es: { b: "Plátano maduro horneado + Queso Búfala.", l: "Hamburguesa carne (90g) + Pan sin gluten + Papa brava.", d: "Ensalada Capresa (30g Búfala) + Galleta soda." },
+                en: { b: "Baked Sweet Plantain + Buffalo Cheese.", l: "Beef Burger (90g) + GF Bun + Spicy Potato.", d: "Caprese Salad (30g Buffalo) + Soda Cracker." },
+                no: { b: "Bakt søtbanan + Bøffelost.", l: "Hamburger (90g) + Glutenfritt brød + Krydret potet.", d: "Caprese-salat (30g Bøffel) + Sodakjeks." }
+            },
+            10: {
+                es: { b: "Queso de cabra (90g) + Arepa mediana + Margarina.", l: "Croquetas de pescado (Air Fryer 90g) + Arroz.", d: "Sopa combinada de auyama/apio + Carne (90g)." },
+                en: { b: "Goat Cheese (90g) + Medium Arepa + Margarine.", l: "Fish Croquettes (Air Fryer 90g) + Rice.", d: "Pumpkin/Celery Soup + Beef (90g)." },
+                no: { b: "Geitost (90g) + Medium Arepa + Margarin.", l: "Fiskekaker (Air Fryer 90g) + Ris.", d: "Gresskar/Sellerisuppe + Kjøtt (90g)." }
+            }
         };
 
-        // --- LOGIC: RENDER TAB 1 ---
+        const randomLists = {
+            es: { p: ["Pollo", "Carne", "Pescado", "Atún", "Queso", "Huevos"], s: ["Arroz", "Yuca", "Batata", "Plátano", "Arepa", "Pasta SG"], v: ["Calabacín", "Vainitas", "Zanahoria", "Espinacas", "Berenjena"], f: ["Aguacate", "Aceite Oliva", "Aceitunas"] },
+            en: { p: ["Chicken", "Beef", "Fish", "Tuna", "Cheese", "Eggs"], s: ["Rice", "Cassava", "Swt Potato", "Plantain", "Arepa", "GF Pasta"], v: ["Zucchini", "Green Beans", "Carrot", "Spinach", "Eggplant"], f: ["Avocado", "Olive Oil", "Olives"] },
+            no: { p: ["Kylling", "Kjøtt", "Fisk", "Tunfisk", "Ost", "Egg"], s: ["Ris", "Kassava", "Søtpotet", "Banan", "Arepa", "GF Pasta"], v: ["Squash", "Grønne bønner", "Gulrot", "Spinat", "Aubergine"], f: ["Avokado", "Olivenolje", "Oliven"] }
+        };
+
+        // --- APP STATE ---
+        let completedMeals = JSON.parse(localStorage.getItem('maferCycleChecks') || '{}');
+
+        // --- FUNCTIONS ---
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll(`.lang-btn[onclick="setLang('${lang}')"]`).forEach(b => b.classList.add('active'));
+            
+            // Update static UI
+            const t = uiText[lang];
+            document.getElementById('appSubtitle').innerText = t.subtitle;
+            document.getElementById('cycle-info').innerText = t.cycleInfo;
+            document.getElementById('resetBtn').innerText = t.reset;
+            document.getElementById('ideaTitle').innerText = t.ideaTitle;
+            document.getElementById('ideaSub').innerText = t.ideaSub;
+            document.getElementById('btnLunch').innerText = t.btnLunch;
+            document.getElementById('btnDinner').innerText = t.btnDinner;
+            document.getElementById('resTitle').innerText = t.resTitle;
+            document.getElementById('resNote').innerText = t.resNote;
+            document.getElementById('remTitle').innerText = t.remTitle;
+            document.getElementById('rem1').innerHTML = t.rem1;
+            document.getElementById('rem2').innerHTML = t.rem2;
+            document.getElementById('rem3').innerHTML = t.rem3;
+            document.getElementById('rem4').innerHTML = t.rem4;
+            document.getElementById('trackTitle').innerText = t.trackTitle;
+            document.getElementById('newLogTitle').innerText = t.newLog;
+            document.getElementById('lblGluc').innerText = t.lblGluc;
+            document.getElementById('lblSymp').innerText = t.lblSymp;
+            document.getElementById('lblNote').innerText = t.lblNote;
+            document.getElementById('btnSave').innerText = t.btnSave;
+            document.getElementById('histTitle').innerText = t.histTitle;
+            document.getElementById('btnClear').innerText = t.btnClear;
+            
+            document.querySelectorAll('.nav-text').forEach(el => {
+                el.innerText = t[el.dataset.key];
+            });
+
+            renderDays(); // Re-render plan
+        }
+
         function renderDays() {
             const scroller = document.getElementById('dayScroller');
+            const currentActive = document.querySelector('.day-btn.active')?.innerText.split(' ')[1] || 1;
+            
             scroller.innerHTML = '';
             for(let i=1; i<=10; i++) {
                 const btn = document.createElement('button');
-                btn.className = `day-btn ${i===1 ? 'active' : ''}`;
+                const isComplete = checkDayCompletion(i);
+                btn.className = `day-btn ${i == currentActive ? 'active' : ''} ${isComplete ? 'completed-day' : ''}`;
                 btn.innerText = `Día ${i}`;
                 btn.onclick = () => showDay(i, btn);
                 scroller.appendChild(btn);
             }
-            showDay(1); // Default
+            showDay(currentActive);
+        }
+
+        function checkDayCompletion(day) {
+            return completedMeals[`d${day}_b`] && completedMeals[`d${day}_l`] && completedMeals[`d${day}_d`];
         }
 
         function showDay(day, btnElement) {
@@ -315,73 +513,93 @@
                 btnElement.classList.add('active');
             }
             
-            const menu = menuDays[day];
+            const m = menuData[day][currentLang];
+            const t = uiText[currentLang];
+            const ids = { b: `d${day}_b`, l: `d${day}_l`, d: `d${day}_d` };
+
             const html = `
-                <div class="card">
-                    <div class="meal-title">🍳 Desayuno</div>
-                    <div class="meal-content">${menu.desayuno}</div>
+                <div class="card ${completedMeals[ids.b] ? 'checked' : ''}" onclick="toggleCheck('${ids.b}', ${day})">
+                    <div class="check-circle"></div>
+                    <div class="meal-title">🍳 ${t.mealB}</div>
+                    <div class="meal-content">${m.b}</div>
                 </div>
                 <div class="card" style="border-left-color: var(--secondary);">
-                    <div class="meal-title">🍎 Merienda AM</div>
-                    <div class="meal-content">1 Porción de Fruta (Lista 3).</div>
+                    <div class="meal-title">🍎 ${t.mealS} AM</div>
+                    <div class="meal-content">1 Fruta / Fruit / Frukt</div>
                 </div>
-                <div class="card">
-                    <div class="meal-title">🍲 Almuerzo</div>
-                    <div class="meal-content">${menu.almuerzo}</div>
-                    <div class="note">Añadir 1 cdta aceite de oliva o 1/8 aguacate.</div>
+                <div class="card ${completedMeals[ids.l] ? 'checked' : ''}" onclick="toggleCheck('${ids.l}', ${day})">
+                    <div class="check-circle"></div>
+                    <div class="meal-title">🍲 ${t.mealL}</div>
+                    <div class="meal-content">${m.l}</div>
                 </div>
                 <div class="card" style="border-left-color: var(--secondary);">
-                    <div class="meal-title">🍪 Merienda PM</div>
-                    <div class="meal-content">${menu.snack}</div>
+                    <div class="meal-title">🍪 ${t.mealS} PM</div>
+                    <div class="meal-content">Fruta / Fruit</div>
                 </div>
-                <div class="card" style="border-left-color: var(--accent);">
-                    <div class="meal-title">🌙 Cena</div>
-                    <div class="meal-content">${menu.cena}</div>
+                <div class="card ${completedMeals[ids.d] ? 'checked' : ''}" style="border-left-color: var(--accent);" onclick="toggleCheck('${ids.d}', ${day})">
+                    <div class="check-circle"></div>
+                    <div class="meal-title">🌙 ${t.mealD}</div>
+                    <div class="meal-content">${m.d}</div>
                 </div>
             `;
             document.getElementById('menuContent').innerHTML = html;
         }
 
-        // --- LOGIC: TAB 2 RANDOMIZER ---
+        function toggleCheck(id, day) {
+            if (completedMeals[id]) {
+                delete completedMeals[id];
+            } else {
+                completedMeals[id] = true;
+            }
+            localStorage.setItem('maferCycleChecks', JSON.stringify(completedMeals));
+            showDay(day); // Re-render to show strikethrough
+            renderDays(); // Re-render scroller to update checkmarks
+        }
+
+        function resetCycle() {
+            if(confirm(uiText[currentLang].alertReset)) {
+                completedMeals = {};
+                localStorage.removeItem('maferCycleChecks');
+                renderDays();
+            }
+        }
+
         function generateRandomMeal(type) {
-            const p = foodLists.proteins[Math.floor(Math.random() * foodLists.proteins.length)];
-            const s = foodLists.starches[Math.floor(Math.random() * foodLists.starches.length)];
-            const v = foodLists.veggies[Math.floor(Math.random() * foodLists.veggies.length)];
-            const f = foodLists.fats[Math.floor(Math.random() * foodLists.fats.length)];
+            const l = randomLists[currentLang];
+            const p = l.p[Math.floor(Math.random() * l.p.length)];
+            const s = l.s[Math.floor(Math.random() * l.s.length)];
+            const v = l.v[Math.floor(Math.random() * l.v.length)];
+            const f = l.f[Math.floor(Math.random() * l.f.length)];
             
             let text = "";
             if (type === 'lunch') {
-                // Lunch formula: Protein + Starch + Veggie + Fat
-                text = `<strong>Proteína:</strong> ${p}<br><strong>Carbohidrato:</strong> ${s}<br><strong>Vegetal:</strong> ${v}<br><strong>Grasa:</strong> ${f}`;
+                text = `<strong>1:</strong> ${p}<br><strong>2:</strong> ${s}<br><strong>3:</strong> ${v}<br><strong>4:</strong> ${f}`;
             } else {
-                // Dinner formula: Lighter protein + Veggie + (Optional small starch)
-                text = `<strong>Proteína:</strong> ${p}<br><strong>Acompañante:</strong> ${s} (o Casabe)<br><strong>Vegetal:</strong> ${v}`;
+                text = `<strong>1:</strong> ${p}<br><strong>2:</strong> ${s} (small/liten)<br><strong>3:</strong> ${v}`;
             }
             
             document.getElementById('randomText').innerHTML = text;
             document.getElementById('randomResult').style.display = 'block';
         }
 
-        // --- LOGIC: TAB 3 TRACKER (LOCAL STORAGE) ---
         function saveLog() {
             const gluc = document.getElementById('glucose').value;
             const symp = document.getElementById('symptoms').value;
             const note = document.getElementById('notes').value;
             const date = new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-            if(!gluc && !symp && !note) return alert("Escribe algo para guardar.");
+            if(!gluc && !symp && !note) return;
 
             const entry = { date, gluc, symp, note };
             let logs = JSON.parse(localStorage.getItem('maferHealthLogs') || '[]');
-            logs.unshift(entry); // Add to top
+            logs.unshift(entry); 
             localStorage.setItem('maferHealthLogs', JSON.stringify(logs));
             
             renderLogs();
-            // Clear inputs
             document.getElementById('glucose').value = '';
             document.getElementById('symptoms').value = '';
             document.getElementById('notes').value = '';
-            alert("Registro guardado ✨");
+            alert(uiText[currentLang].alertSaved);
         }
 
         function renderLogs() {
@@ -391,11 +609,12 @@
 
             logs.forEach(log => {
                 const div = document.createElement('div');
-                div.className = 'card log-entry';
+                div.className = 'card';
+                div.style.borderLeftColor = 'var(--accent)';
                 div.innerHTML = `
                     <div class="meal-title">${log.date}</div>
-                    ${log.gluc ? `<div>🩸 Glucosa: <strong>${log.gluc}</strong></div>` : ''}
-                    ${log.symp ? `<div>⚠️ Síntomas: ${log.symp}</div>` : ''}
+                    ${log.gluc ? `<div>🩸 ${log.gluc}</div>` : ''}
+                    ${log.symp ? `<div>⚠️ ${log.symp}</div>` : ''}
                     ${log.note ? `<div class="note">📝 ${log.note}</div>` : ''}
                 `;
                 container.appendChild(div);
@@ -403,13 +622,12 @@
         }
 
         function clearLogs() {
-            if(confirm("¿Borrar todo el historial?")) {
+            if(confirm("Delete all history?")) {
                 localStorage.removeItem('maferHealthLogs');
                 renderLogs();
             }
         }
 
-        // --- NAVIGATION ---
         function switchTab(tabId, btn) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -418,8 +636,8 @@
             btn.classList.add('active');
         }
 
-        // --- INIT ---
-        renderDays();
+        // Init
+        setLang('es');
         renderLogs();
 
     </script>

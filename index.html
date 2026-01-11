@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Maria's Protocol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .btn-primary { background-color: #4F46E5; color: white; transition: all 0.2s; }
+        .btn-primary:active { transform: scale(0.98); }
+        .progress-bar { transition: width 0.5s ease-in-out; }
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <div class="bg-white p-6 sticky top-0 z-10 shadow-sm">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">Maria's Protocol</h1>
+                <p class="text-xs text-gray-500">Day <span id="currentDayDisplay">1</span> of 10</p>
+            </div>
+            <button onclick="toggleTracker()" class="text-indigo-600">
+                <i class="fa-solid fa-heart-pulse text-2xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="healthTracker" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 h-3/4 overflow-y-auto">
+            <div class="flex justify-between mb-4">
+                <h2 class="text-lg font-bold">Medical Tracker</h2>
+                <button onclick="toggleTracker()" class="text-gray-400"><i class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Current Weight (kg)</label>
+                <input type="number" class="w-full p-3 border rounded-lg" placeholder="e.g. 85.5">
+            </div>
+
+            <div class="mb-6 border-t pt-4">
+                <h3 class="text-sm font-bold text-indigo-600 mb-3">Liver Health (Fatty Liver)</h3>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="text-xs text-gray-500">AST</label>
+                        <input type="number" class="w-full p-2 border rounded text-center">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500">ALT</label>
+                        <input type="number" class="w-full p-2 border rounded text-center">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500">GGT</label>
+                        <input type="number" class="w-full p-2 border rounded text-center">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6 border-t pt-4">
+                <h3 class="text-sm font-bold text-indigo-600 mb-3">Metabolic Control</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs text-gray-500">Glucose (Fasting)</label>
+                        <input type="number" class="w-full p-2 border rounded text-center">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500">Insulin (Fasting)</label>
+                        <input type="number" class="w-full p-2 border rounded text-center">
+                    </div>
+                </div>
+            </div>
+
+            <button class="w-full btn-primary py-3 rounded-xl font-semibold shadow-lg">Save Medical Data</button>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto p-4 space-y-6">
+
+        <div class="card p-4">
+            <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Morning Protocol</h2>
+            <div id="supplementList" class="space-y-3">
+                </div>
+        </div>
+
+        <div class="card p-4">
+            <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Daily Rations</h2>
+            <div id="rationList" class="space-y-4">
+                </div>
+        </div>
+
+        <div class="card p-4 border-2 border-indigo-50">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-indigo-900">Today's Menu</h2>
+                <div class="flex gap-2">
+                    <button onclick="changeDay(-1)" class="p-2 bg-gray-100 rounded-full"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button onclick="changeDay(1)" class="p-2 bg-gray-100 rounded-full"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div id="mealContainer" class="space-y-4">
+                </div>
+        </div>
+
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // --- APP STATE ---
+        let currentDay = 1;
+        let rationsConsumed = {
+            proteins: 0,
+            carbs: 0,
+            fruits: 0,
+            veggies: 0,
+            fats: 0
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSupplements();
+            renderRations();
+            renderMeals(currentDay);
+        });
+
+        // --- RENDER FUNCTIONS ---
+        function renderSupplements() {
+            const container = document.getElementById('supplementList');
+            let html = '';
+            MARIA_PROTOCOL_DATA.supplements.forEach((supp, index) => {
+                html += `
+                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                    <div>
+                        <p class="font-semibold text-gray-800">${supp.name}</p>
+                        <p class="text-xs text-indigo-500">${supp.timing}</p>
+                    </div>
+                    <input type="checkbox" class="w-6 h-6 text-indigo-600 rounded focus:ring-indigo-500">
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderRations() {
+            const container = document.getElementById('rationList');
+            const goals = MARIA_PROTOCOL_DATA.userProfile.goals;
+            
+            // Map keys to display names and colors
+            const rationTypes = [
+                { key: 'proteins', label: 'Proteins', color: 'bg-red-500', icon: 'fa-drumstick-bite' },
+                { key: 'carbs', label: 'Carbs/Starches', color: 'bg-yellow-500', icon: 'fa-bread-slice' },
+                { key: 'fruits', label: 'Fruits', color: 'bg-orange-400', icon: 'fa-apple-whole' },
+                { key: 'veggies', label: 'Vegetables', color: 'bg-green-500', icon: 'fa-leaf' },
+                { key: 'fats', label: 'Fats', color: 'bg-blue-400', icon: 'fa-droplet' }
+            ];
+
+            let html = '';
+            rationTypes.forEach(type => {
+                const max = goals[type.key];
+                const current = rationsConsumed[type.key];
+                const percentage = (current / max) * 100;
+                
+                html += `
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="font-medium text-gray-700"><i class="fa-solid ${type.icon} w-5"></i> ${type.label}</span>
+                        <span class="text-gray-500">${current} / ${max}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="${type.color} h-2.5 rounded-full progress-bar" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-1">
+                        <button onclick="updateRation('${type.key}', -1)" class="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">-</button>
+                        <button onclick="updateRation('${type.key}', 1)" class="text-xs bg-indigo-100 px-2 py-1 rounded text-indigo-600 font-bold">+</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderMeals(day) {
+            document.getElementById('currentDayDisplay').innerText = day;
+            const container = document.getElementById('mealContainer');
+            
+            // Find the specific day in the data
+            const dayData = MARIA_PROTOCOL_DATA.mealPlan.find(d => d.day === day);
+            
+            if (!dayData) {
+                container.innerHTML = `<div class="p-4 text-center text-gray-500">Data for Day ${day} coming soon!</div>`;
+                return;
+            }
+
+            const meals = dayData.meals;
+            const mealOrder = ['breakfast', 'lunch', 'dinner', 'snackAM', 'snackPM'];
+            const titles = {
+                breakfast: 'Desayuno',
+                lunch: 'Almuerzo',
+                dinner: 'Cena',
+                snackAM: 'Merienda AM',
+                snackPM: 'Merienda PM'
+            };
+
+            let html = '';
+            mealOrder.forEach(key => {
+                if(meals[key]) {
+                    html += `
+                    <div class="border-b border-gray-100 pb-3 last:border-0">
+                        <h3 class="text-xs font-bold text-indigo-500 uppercase mb-1">${titles[key]}</h3>
+                        <p class="text-gray-800 text-sm leading-relaxed">${meals[key]}</p>
+                    </div>`;
+                }
+            });
+            container.innerHTML = html;
+        }
+
+        // --- LOGIC FUNCTIONS ---
+        function changeDay(delta) {
+            let newDay = currentDay + delta;
+            if (newDay < 1) newDay = 10;
+            if (newDay > 10) newDay = 1;
+            currentDay = newDay;
+            renderMeals(currentDay);
+        }
+
+        function updateRation(type, amount) {
+            const max = MARIA_PROTOCOL_DATA.userProfile.goals[type];
+            let newValue = rationsConsumed[type] + amount;
+            
+            if (newValue >= 0 && newValue <= max) {
+                rationsConsumed[type] = newValue;
+                renderRations();
+            }
+        }
+
+        function toggleTracker() {
+            const el = document.getElementById('healthTracker');
+            el.classList.toggle('hidden');
+        }
+
+    </script>
+</body>
+</html>

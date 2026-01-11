@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Maria's Protocol</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <script>
@@ -18,11 +18,22 @@
             '<div style="padding:20px; color:red; font-size:20px;">Something broke: ' + message + '</div>';
         };
     </script>
-</head>
-<body class="bg-slate-50">
     
-    <div id="root" class="p-10 text-center text-slate-500 font-bold">
-        Loading Maria's Protocol...
+    <style>
+        body {
+            /* This ensures content starts below the notch */
+            padding-top: env(safe-area-inset-top); 
+            padding-bottom: env(safe-area-inset-bottom);
+            -webkit-tap-highlight-color: transparent; /* Removes grey box on tap */
+        }
+    </style>
+</head>
+<body class="bg-slate-50 select-none touch-manipulation">
+    
+    <div id="root" class="h-full">
+        <div class="p-10 text-center text-slate-400 font-bold animate-pulse">
+            Loading App...
+        </div>
     </div>
 
     <script type="text/babel">
@@ -30,6 +41,7 @@
         const protocolData = {
             userSettings: {
                 dailyRations: {
+                    [cite_start]// [cite: 14]
                     proteins: { total: 10, unit: "portions", color: "bg-purple-100 text-purple-800" },
                     starches: { total: 5, unit: "portions", color: "bg-blue-100 text-blue-800" },
                     vegetables: { total: 2, unit: "cups", color: "bg-green-100 text-green-800" },
@@ -37,6 +49,7 @@
                     fats: { total: 2, unit: "portions", color: "bg-orange-100 text-orange-800" }
                 },
                 morningRoutine: [
+                    [cite_start]// [cite: 41]
                     { id: 'm1', task: "Glutamina (Glutanet/Glutapack)", time: "Before Breakfast", completed: false },
                     { id: 'm2', task: "Probiotic (Coll Vital/Colozin)", time: "20 min before meal", completed: false }
                 ]
@@ -45,50 +58,49 @@
                 {
                     dayId: 1,
                     meals: {
-                        breakfast: { protein: "Queso semi duro (90g)", carb: "Arepa Asada (100g)", fat: "Aguacate (1 trozo)", drink: "Infusión (Jamaica/Linaza)" },
-                        lunch: { protein: "Pechuga empanizada Air Fryer (90g)", carb: "Papas (2 unidades)", veggie: "Ensalada rallada + 1 cdta mayonesa" },
-                        dinner: { protein: "Carne molida en Hamburguesa", carb: "Casabe", veggie: "Tomate, Lechuga, Pepino" }
+                        [cite_start]breakfast: { protein: "Queso semi duro (90g)", carb: "Arepa Asada (100g)", fat: "Aguacate (1 trozo)", drink: "Infusión (Jamaica/Linaza)" }, // [cite: 1]
+                        [cite_start]lunch: { protein: "Pechuga empanizada Air Fryer (90g)", carb: "Papas (2 unidades)", veggie: "Ensalada rallada + 1 cdta mayonesa" }, // [cite: 3]
+                        [cite_start]dinner: { protein: "Carne molida en Hamburguesa", carb: "Casabe", veggie: "Tomate, Lechuga, Pepino" } // [cite: 5]
                     }
                 },
                 {
                     dayId: 2,
                     meals: {
-                        breakfast: { protein: "Jamon de Pavo (3 reb)", carb: "Arepa de batata (1)", fat: "Alfalfa, tomate + Margarina" },
-                        lunch: { protein: "Calabacines rellenos carne (90g)", carb: "Arroz Blanco", veggie: "Vegetales de relleno" },
-                        dinner: { protein: "Ensalada de Atun (90g)", carb: "Arepa pequeña", veggie: "Cebolla y tomate" }
+                        [cite_start]breakfast: { protein: "Jamon de Pavo (3 reb)", carb: "Arepa de batata (1)", fat: "Alfalfa, tomate + Margarina" }, // [cite: 1]
+                        [cite_start]lunch: { protein: "Calabacines rellenos carne (90g)", carb: "Arroz Blanco", veggie: "Vegetales de relleno" }, // [cite: 3]
+                        [cite_start]dinner: { protein: "Ensalada de Atun (90g)", carb: "Arepa pequeña", veggie: "Cebolla y tomate" } // [cite: 5]
                     }
                 },
                 {
                     dayId: 3,
                     meals: {
-                        breakfast: { protein: "Pollo en salsa (90g)", carb: "Papa rellenas (2x 100g)", fat: "Aceite (1 cdta)" },
-                        lunch: { protein: "Atun al ajillo (90g)", carb: "Yuca sancochada", veggie: "Ensalada berros" },
-                        dinner: { protein: "Carne molida (4 cdas) + crema", carb: "Tortilla de maíz (Burrito)", veggie: "Guacamole (2 cdas)" }
+                        [cite_start]breakfast: { protein: "Pollo en salsa (90g)", carb: "Papa rellenas (2x 100g)", fat: "Aceite (1 cdta)" }, // [cite: 1]
+                        [cite_start]lunch: { protein: "Atun al ajillo (90g)", carb: "Yuca sancochada", veggie: "Ensalada berros" }, // [cite: 3]
+                        [cite_start]dinner: { protein: "Carne molida (4 cdas) + crema", carb: "Tortilla de maíz (Burrito)", veggie: "Guacamole (2 cdas)" } // [cite: 5]
                     }
                 },
                 {
                     dayId: 4,
                     meals: {
-                        breakfast: { protein: "Carne Molida sin grasa", carb: "Arepa con Ajonjolí", fat: "Aguacate (1 trozo)", drink: "Té" },
-                        lunch: { protein: "Arroz con pollo y vegetales", carb: "Arroz (included)", veggie: "Ensalada" },
-                        dinner: { protein: "Jamon y queso Mozzarella bufala", carb: "Tortilla de platano", veggie: "Vegetales" }
+                        [cite_start]breakfast: { protein: "Carne Molida sin grasa", carb: "Arepa con Ajonjolí", fat: "Aguacate (1 trozo)", drink: "Té" }, // [cite: 1]
+                        [cite_start]lunch: { protein: "Arroz con pollo y vegetales", carb: "Arroz (included)", veggie: "Ensalada" }, // [cite: 3]
+                        [cite_start]dinner: { protein: "Jamon y queso Mozzarella bufala", carb: "Tortilla de platano", veggie: "Vegetales" } // [cite: 5]
                     }
                 },
                 {
                     dayId: 5,
                     meals: {
-                        breakfast: { protein: "Ensalada de Atún (6 cdas)", carb: "Casabe (60g)", fat: "Aceite en ensalada", drink: "Té" },
-                        lunch: { protein: "Parrilla Carne/Cebolla/Pimentón", carb: "Bollitos", veggie: "Ensalada Mixta" },
-                        dinner: { protein: "Buñuelos de Yuca (Air Fryer)", carb: "Yuca (included)", veggie: "Vegetales al gusto" }
+                        [cite_start]breakfast: { protein: "Ensalada de Atún (6 cdas)", carb: "Casabe (60g)", fat: "Aceite en ensalada", drink: "Té" }, // [cite: 1]
+                        [cite_start]lunch: { protein: "Parrilla Carne/Cebolla/Pimentón", carb: "Bollitos", veggie: "Ensalada Mixta" }, // [cite: 3]
+                        [cite_start]dinner: { protein: "Buñuelos de Yuca (Air Fryer)", carb: "Yuca (included)", veggie: "Vegetales al gusto" } // [cite: 5]
                     }
                 }
             ]
         };
         // --- DATA END ---
 
-        // --- COMPONENTS ---
         const Card = ({ children, title }) => (
-            <div className="bg-white rounded-2xl shadow-sm p-5 mb-4">
+            <div className="bg-white rounded-2xl shadow-sm p-5 mb-4 border border-slate-100">
                 {title && <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{title}</h2>}
                 {children}
             </div>
@@ -99,7 +111,6 @@
             const [rations, setRations] = React.useState(protocolData.userSettings.dailyRations);
             const [morningTasks, setMorningTasks] = React.useState(protocolData.userSettings.morningRoutine);
 
-            // Safer data fetching
             let dayData = protocolData.days.find(d => d.dayId === currentDay);
             if (!dayData) dayData = protocolData.days[0];
             const menu = dayData.meals;
@@ -119,16 +130,18 @@
             };
 
             return (
-                <div className="min-h-screen bg-slate-50 p-4 font-sans text-slate-800 max-w-md mx-auto">
+                // Added pb-20 for bottom scrolling space
+                <div className="min-h-screen p-4 pb-20 font-sans text-slate-800 max-w-md mx-auto">
                     
                     {/* Header */}
                     <header className="flex justify-between items-center mb-6 mt-2">
                         <div>
-                            <h1 className="text-2xl font-bold text-slate-900">Maria's Protocol</h1>
-                            <p className="text-slate-500 text-sm">Healing & Nutrition</p>
+                            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Maria's Protocol</h1>
+                            <p className="text-slate-500 text-sm font-medium">Day {currentDay} of 10</p>
                         </div>
-                        <div className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-bold">
-                            Day {currentDay}
+                        <div className="bg-white shadow-sm border border-slate-100 px-2 py-1 rounded-lg flex space-x-1">
+                             <button onClick={() => setCurrentDay(d => d > 1 ? d - 1 : 5)} className="p-2 hover:bg-slate-50 rounded-md text-slate-400 font-bold">←</button>
+                             <button onClick={() => setCurrentDay(d => d < 5 ? d + 1 : 1)} className="p-2 hover:bg-slate-50 rounded-md text-purple-600 font-bold">→</button>
                         </div>
                     </header>
 
@@ -139,13 +152,13 @@
                                 <div 
                                     key={task.id} 
                                     onClick={() => toggleTask(task.id)}
-                                    className="flex items-center cursor-pointer p-2 hover:bg-slate-50 rounded-lg transition"
+                                    className="flex items-center cursor-pointer p-2 -mx-2 hover:bg-slate-50 rounded-lg transition active:scale-[0.98]"
                                 >
-                                    <div className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center ${task.completed ? 'bg-green-500 border-green-500' : 'border-slate-300'}`}>
-                                        {task.completed && <span className="text-white text-xs">✓</span>}
+                                    <div className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center transition-colors ${task.completed ? 'bg-green-500 border-green-500' : 'border-slate-300'}`}>
+                                        {task.completed && <span className="text-white text-xs font-bold">✓</span>}
                                     </div>
                                     <div>
-                                        <p className={`font-medium ${task.completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
+                                        <p className={`font-medium text-sm ${task.completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                                             {task.task}
                                         </p>
                                         <p className="text-xs text-slate-400">{task.time}</p>
@@ -156,63 +169,70 @@
                     </Card>
 
                     {/* Ration Bank */}
-                    <Card title="Daily Rations Left">
+                    <Card title="Daily Rations">
                         <div className="grid grid-cols-2 gap-3">
                             {Object.entries(rations).map(([key, data]) => (
                                 <button 
                                     key={key}
                                     onClick={() => decrementRation(key)}
-                                    className={`${data.color} p-3 rounded-xl flex flex-col items-center justify-center transition active:scale-95`}
+                                    className={`${data.color} p-3 rounded-xl flex flex-col items-center justify-center transition active:scale-95 border border-white shadow-sm`}
                                 >
                                     <span className="text-2xl font-bold">{data.total}</span>
-                                    <span className="text-xs uppercase font-medium">{key}</span>
+                                    <span className="text-[10px] uppercase font-bold tracking-wide opacity-70">{key}</span>
                                 </button>
                             ))}
                         </div>
-                        <p className="text-center text-xs text-slate-400 mt-3">Tap to use a ration</p>
+                        <p className="text-center text-xs text-slate-300 mt-3 font-medium">Tap to consume</p>
                     </Card>
 
                     {/* Menu Display */}
-                    <Card>
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-bold text-slate-800">Today's Menu</h2>
-                            <div className="flex space-x-2">
-                                <button onClick={() => setCurrentDay(d => d > 1 ? d - 1 : 5)} className="px-3 py-1 bg-slate-100 rounded font-bold hover:bg-slate-200">←</button>
-                                <button onClick={() => setCurrentDay(d => d < 5 ? d + 1 : 1)} className="px-3 py-1 bg-slate-100 rounded font-bold hover:bg-slate-200">→</button>
-                            </div>
-                        </div>
+                    <div className="space-y-4">
+                        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Today's Menu</h2>
 
                         {/* Breakfast */}
-                        <div className="mb-6">
-                            <h3 className="text-sm font-bold text-orange-500 uppercase mb-2">Breakfast</h3>
-                            <div className="bg-orange-50 p-3 rounded-lg border border-orange-100">
-                                <p className="font-medium text-slate-800">{menu && menu.breakfast ? menu.breakfast.protein : 'Loading...'}</p>
-                                <p className="text-sm text-slate-600">+ {menu && menu.breakfast ? menu.breakfast.carb : ''}</p>
-                                <p className="text-sm text-slate-600">+ {menu && menu.breakfast ? menu.breakfast.fat : ''}</p>
-                                {menu && menu.breakfast && menu.breakfast.drink && <p className="text-xs text-orange-700 mt-2 border-t border-orange-200 pt-2">☕ {menu.breakfast.drink}</p>}
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <div className="flex items-center mb-3">
+                                <span className="w-2 h-2 rounded-full bg-orange-500 mr-2"></span>
+                                <h3 className="text-sm font-bold text-slate-700 uppercase">Breakfast</h3>
                             </div>
+                            <div className="space-y-1">
+                                <p className="font-semibold text-slate-800 text-lg leading-tight">{menu?.breakfast?.protein}</p>
+                                <p className="text-sm text-slate-500">+ {menu?.breakfast?.carb}</p>
+                                <p className="text-sm text-slate-500">+ {menu?.breakfast?.fat}</p>
+                            </div>
+                            {menu?.breakfast?.drink && (
+                                <div className="mt-3 pt-3 border-t border-slate-50 flex items-center text-xs text-slate-400 font-medium">
+                                    <span className="mr-1 text-base">☕</span> {menu.breakfast.drink}
+                                </div>
+                            )}
                         </div>
 
                         {/* Lunch */}
-                        <div className="mb-6">
-                            <h3 className="text-sm font-bold text-green-600 uppercase mb-2">Lunch</h3>
-                            <div className="bg-green-50 p-3 rounded-lg border border-green-100">
-                                <p className="font-medium text-slate-800">{menu && menu.lunch ? menu.lunch.protein : 'Loading...'}</p>
-                                <p className="text-sm text-slate-600">+ {menu && menu.lunch ? menu.lunch.carb : ''}</p>
-                                <p className="text-sm text-slate-600">+ {menu && menu.lunch ? menu.lunch.veggie : ''}</p>
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <div className="flex items-center mb-3">
+                                <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                                <h3 className="text-sm font-bold text-slate-700 uppercase">Lunch</h3>
+                            </div>
+                            <div className="space-y-1">
+                                <p className="font-semibold text-slate-800 text-lg leading-tight">{menu?.lunch?.protein}</p>
+                                <p className="text-sm text-slate-500">+ {menu?.lunch?.carb}</p>
+                                <p className="text-sm text-slate-500">+ {menu?.lunch?.veggie}</p>
                             </div>
                         </div>
 
                         {/* Dinner */}
-                        <div>
-                            <h3 className="text-sm font-bold text-blue-600 uppercase mb-2">Dinner</h3>
-                            <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                                <p className="font-medium text-slate-800">{menu && menu.dinner ? menu.dinner.protein : 'Loading...'}</p>
-                                <p className="text-sm text-slate-600">+ {menu && menu.dinner ? menu.dinner.carb : ''}</p>
-                                <p className="text-sm text-slate-600">+ {menu && menu.dinner ? menu.dinner.veggie : ''}</p>
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                             <div className="flex items-center mb-3">
+                                <span className="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
+                                <h3 className="text-sm font-bold text-slate-700 uppercase">Dinner</h3>
+                            </div>
+                            <div className="space-y-1">
+                                <p className="font-semibold text-slate-800 text-lg leading-tight">{menu?.dinner?.protein}</p>
+                                <p className="text-sm text-slate-500">+ {menu?.dinner?.carb}</p>
+                                <p className="text-sm text-slate-500">+ {menu?.dinner?.veggie}</p>
                             </div>
                         </div>
-                    </Card>
+                    </div>
                 </div>
             );
         };

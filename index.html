@@ -7,6 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+  <!-- PWA -->
+  <meta name="theme-color" content="#1B4332">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Plan Mafer">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <style>
     /* ============================================
        CSS VARIABLES & RESET
@@ -718,6 +725,158 @@
       transform: translateX(-50%) translateY(0);
     }
 
+
+    /* ============================================
+       APPLE HEALTH IMPORT CARD
+       ============================================ */
+    .apple-health-card {
+      background: linear-gradient(135deg, #1C1C1E, #2C2C2E);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 12px;
+      border: 1px solid #3A3A3C;
+    }
+    .ah-title {
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #FF6B6B;
+      margin-bottom: 6px;
+    }
+    .ah-sub {
+      font-size: 0.8rem;
+      color: #98989D;
+      font-weight: 600;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .ah-upload-btn {
+      display: block;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px dashed rgba(255,255,255,0.2);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #E5E5EA;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ah-upload-btn:active { background: rgba(255,255,255,0.14); }
+    .ah-status {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #30D158;
+      min-height: 16px;
+    }
+
+    /* ============================================
+       EXPANDED MEALS MODAL / SWAP PANEL
+       ============================================ */
+    .swap-panel {
+      position: fixed;
+      bottom: var(--nav-h);
+      left: 0; right: 0;
+      background: white;
+      border-radius: 20px 20px 0 0;
+      padding: 20px;
+      z-index: 500;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
+      max-height: 70vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .swap-panel.open { transform: translateY(0); }
+    .swap-handle {
+      width: 40px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 16px;
+    }
+    .swap-title {
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .swap-option {
+      padding: 12px 14px;
+      background: var(--cream);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .swap-option:active { background: var(--green-pale); border-color: var(--green-mid); }
+    .swap-close {
+      width: 100%;
+      background: none;
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .swap-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 499;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .swap-overlay.open { opacity: 1; pointer-events: auto; }
+
+    /* Swap hint on meal cards */
+    .swap-hint {
+      font-size: 0.7rem;
+      color: var(--green-mid);
+      font-weight: 700;
+      margin-top: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    /* PWA install banner */
+    .pwa-banner {
+      background: var(--green-dark);
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: none;
+    }
+    .pwa-banner.show { display: flex; }
+    .pwa-install-btn {
+      background: white;
+      color: var(--green-dark);
+      border: none;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .pwa-dismiss { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 1.2rem; cursor: pointer; padding: 0 0 0 10px; }
+
   </style>
 </head>
 <body>
@@ -803,6 +962,17 @@
   <div class="section-heading" id="healthHeading">Diario de Salud</div>
   <div class="section-sub" id="healthSub">Registra tu glucosa, síntomas y agua</div>
 
+  <!-- Apple Health Import -->
+  <div class="apple-health-card">
+    <div class="ah-title">🍎 Importar desde Apple Health</div>
+    <div class="ah-sub" id="ahSub">Exporta desde la app Salud → tu foto → Exportar datos → sube el ZIP aquí</div>
+    <label class="ah-upload-btn" for="ahFileInput">
+      <span id="ahBtnLabel">📂 Seleccionar archivo ZIP / XML</span>
+      <input type="file" id="ahFileInput" accept=".zip,.xml" style="display:none" onchange="importAppleHealth(this)">
+    </label>
+    <div id="ahStatus" class="ah-status"></div>
+  </div>
+
   <!-- Water tracker -->
   <div class="water-widget">
     <div class="water-title" id="waterTitle">💧 Agua de hoy</div>
@@ -857,6 +1027,27 @@
     <span class="nav-label" data-key="navHealth">Salud</span>
   </button>
 </nav>
+
+
+<!-- Swap panel overlay -->
+<div class="swap-overlay" id="swapOverlay" onclick="closeSwap()"></div>
+
+<!-- Meal swap panel -->
+<div class="swap-panel" id="swapPanel">
+  <div class="swap-handle"></div>
+  <div class="swap-title" id="swapTitle">Opciones de sustitución</div>
+  <div id="swapOptions"></div>
+  <button class="swap-close" onclick="closeSwap()" id="swapCloseBtn">Cerrar</button>
+</div>
+
+<!-- PWA install banner -->
+<div class="pwa-banner" id="pwaBanner">
+  <span id="pwaBannerText">📲 Instalar Plan Mafer en tu teléfono</span>
+  <div style="display:flex;align-items:center;gap:4px">
+    <button class="pwa-install-btn" id="pwaInstallBtn" onclick="installPWA()">Instalar</button>
+    <button class="pwa-dismiss" onclick="dismissPWA()">×</button>
+  </div>
+</div>
 
 <!-- Toast notification -->
 <div class="toast" id="toast"></div>
@@ -1142,27 +1333,214 @@ const MENU = {
 };
 
 /* ============================================================
-   RANDOM MEAL COMBOS — based on food lists from nutritionist plan
-   All items are gluten-free, low-FODMAP, lactose-free, no added sugar
+   RANDOM MEAL COMBOS — Nutritional values per Lic. Ana K. Rodríguez
+   All items: gluten-free, low-FODMAP, lactose-free, no added sugar
+   Ingredients common in Venezuela included throughout
    ============================================================ */
 const COMBOS = {
   es: {
-    prot: ["Pollo a la plancha (90g)","Carne magra asada (90g)","Pescado al horno (90g)","Atún al natural (90g)","Pavo al horno (90g)","2 claras de huevo","Croquetas de pescado AF (90g)","Pollo esmechado (90g)","Carne molida magra (90g)","Jamón de pavo (3 reb)"],
-    carb: ["Arroz blanco (½ tz)","Yuca sancochada (120g)","Batata al vapor (1 und)","Arepa mediana (1 und)","Casabe (60g)","Papa al horno (1 und)","Bollito de maíz (2 und)","Tortilla de plátano (1 und)","Galletas de arroz SG (2 paq)","Quinoa (½ tz)"],
-    veg:  ["Calabacín salteado (1 tz)","Brócoli al vapor (1 tz)","Vainitas sancochadas (½ tz)","Zanahoria asada (½ tz)","Espinacas salteadas (1 tz)","Berenjena a la plancha (1 tz)","Ensalada de tomate y pepino","Acelga al vapor (1 tz)","Palmito (1 tz)","Auyama sancochada (½ tz)"],
-    fat:  ["Aguacate (1/8 und)","Aceite de oliva (1 cdta)","Aceitunas (5 und)","Almendras (6 und)","Margarina vegetal SG (1 cdta)"]
+    prot: [
+      "Pollo a la plancha (90g)",
+      "Carne de res magra asada (90g)",
+      "Pescado a la plancha (90g) — carite, pargo o mero",
+      "Atún al natural (90g) — sin aceite",
+      "Pavo horneado (90g)",
+      "Lomo de cerdo a la plancha (90g)",
+      "Carne molida magra sofrita (90g)",
+      "Pollo esmechado en salsa de tomate natural (90g)",
+      "Pechuga al horno con hierbas (90g)",
+      "Croquetas de pescado en air fryer (90g)",
+      "Sardinas frescas a la plancha (2 und)",
+      "Claras de huevo revueltas (3 und)",
+      "Pisillo de pescado (carite / 6 cdas)",
+      "Jamón de pavo (3 rebanadas)",
+      "Bistec de res a la plancha (90g)",
+      "Pollo guisado en salsa de vegetales (90g)",
+      "Pescado sudado con vegetales (90g)"
+    ],
+    carb: [
+      "Arepa asada mediana (1 und / 100g)",
+      "Arroz blanco (½ tz cocido)",
+      "Yuca sancochada (120g)",
+      "Batata al vapor (1 und mediana)",
+      "Casabe (60g)",
+      "Papa sancochada (1 und mediana)",
+      "Plátano verde sancochado (¼ und)",
+      "Plátano maduro horneado (¼ und)",
+      "Bollito de maíz (2 und)",
+      "Tortilla de maíz (1 und)",
+      "Galletas de arroz SG (2 paquetes)",
+      "Arepa de batata (1 und mediana)",
+      "Apio sancochado (120g)",
+      "Ñame sancochado (120g)",
+      "Ocumo sancochado (120g)",
+      "Quinoa cocida (½ tz)",
+      "Papa rellena air fryer (1 und)"
+    ],
+    veg: [
+      "Calabacín salteado en aceite de oliva (1 tz)",
+      "Brócoli al vapor con limón (1 tz)",
+      "Vainitas sancochadas (½ tz)",
+      "Zanahoria asada en horno (½ tz)",
+      "Espinacas salteadas con ajo (1 tz)",
+      "Berenjena a la plancha (1 tz)",
+      "Ensalada de tomate, pepino y cebollín",
+      "Acelga al vapor (1 tz)",
+      "Palmito con limón y cilantro (1 tz)",
+      "Auyama sancochada (½ tz)",
+      "Ensalada de berros y tomate",
+      "Chayota sancochada (1 tz)",
+      "Crema de auyama sin harina (1 tz)",
+      "Ensalada mixta: lechuga, tomate, pepino",
+      "Champiñones salteados (1 tz)",
+      "Repollo salteado (1 tz)",
+      "Célery con tomate y albahaca",
+      "Coliflor al vapor (1 tz)"
+    ],
+    fat: [
+      "Aguacate (1/8 und)",
+      "Aceite de oliva extra virgen (1 cdta)",
+      "Aceitunas verdes (5 und)",
+      "Almendras sin sal (6 und)",
+      "Margarina vegetal SG (1 cdta)",
+      "Ajonjolí tostado (1 cdta — como grasa del día)"
+    ]
   },
   en: {
-    prot: ["Grilled chicken (90g)","Lean roast beef (90g)","Baked fish (90g)","Canned tuna in water (90g)","Baked turkey (90g)","2 egg whites","AF fish croquettes (90g)","Shredded chicken (90g)","Lean ground beef (90g)","Turkey ham (3 slices)"],
-    carb: ["White rice (½ cup)","Boiled cassava (120g)","Steamed sweet potato (1)","Medium arepa (1)","Cassava bread (60g)","Baked potato (1)","Corn dumplings (2)","Plantain tortilla (1)","GF rice crackers (2 packs)","Quinoa (½ cup)"],
-    veg:  ["Sautéed zucchini (1 cup)","Steamed broccoli (1 cup)","Boiled green beans (½ cup)","Roasted carrot (½ cup)","Sautéed spinach (1 cup)","Grilled eggplant (1 cup)","Tomato & cucumber salad","Steamed chard (1 cup)","Hearts of palm (1 cup)","Boiled pumpkin (½ cup)"],
-    fat:  ["Avocado (1/8)","Olive oil (1 tsp)","Olives (5)","Almonds (6)","GF vegan margarine (1 tsp)"]
+    prot: [
+      "Grilled chicken breast (90g)",
+      "Lean roast beef (90g)",
+      "Grilled fish (90g) — snapper, grouper or mackerel",
+      "Canned tuna in water (90g)",
+      "Baked turkey (90g)",
+      "Grilled pork loin (90g)",
+      "Sautéed lean ground beef (90g)",
+      "Shredded chicken in tomato sauce (90g)",
+      "Herb-baked chicken breast (90g)",
+      "Air-fryer fish croquettes (90g)",
+      "Fresh grilled sardines (2 units)",
+      "Scrambled egg whites (3 units)",
+      "Fish pisillo / flaked fish (6 tbsp)",
+      "Turkey ham (3 slices)",
+      "Grilled beef steak (90g)",
+      "Chicken stewed in vegetable sauce (90g)",
+      "Steamed fish with vegetables (90g)"
+    ],
+    carb: [
+      "Grilled medium arepa (1 / 100g)",
+      "White rice (½ cup cooked)",
+      "Boiled cassava (120g)",
+      "Steamed sweet potato (1 medium)",
+      "Cassava bread (60g)",
+      "Boiled potato (1 medium)",
+      "Boiled green plantain (¼ unit)",
+      "Baked ripe plantain (¼ unit)",
+      "Corn dumplings (2 units)",
+      "Corn tortilla (1 unit)",
+      "GF rice crackers (2 packs)",
+      "Sweet potato arepa (1 medium)",
+      "Boiled apio / arracacha (120g)",
+      "Boiled yam / ñame (120g)",
+      "Boiled taro / ocumo (120g)",
+      "Cooked quinoa (½ cup)",
+      "Air-fryer stuffed potato (1 unit)"
+    ],
+    veg: [
+      "Zucchini sautéed in olive oil (1 cup)",
+      "Steamed broccoli with lemon (1 cup)",
+      "Boiled green beans (½ cup)",
+      "Oven-roasted carrot (½ cup)",
+      "Spinach sautéed with garlic (1 cup)",
+      "Grilled eggplant (1 cup)",
+      "Tomato, cucumber & spring onion salad",
+      "Steamed chard (1 cup)",
+      "Hearts of palm with lemon & cilantro (1 cup)",
+      "Boiled pumpkin / auyama (½ cup)",
+      "Watercress & tomato salad",
+      "Boiled chayote (1 cup)",
+      "Pumpkin cream soup without flour (1 cup)",
+      "Mixed salad: lettuce, tomato, cucumber",
+      "Sautéed mushrooms (1 cup)",
+      "Sautéed cabbage (1 cup)",
+      "Celery with tomato & basil",
+      "Steamed cauliflower (1 cup)"
+    ],
+    fat: [
+      "Avocado (1/8 unit)",
+      "Extra-virgin olive oil (1 tsp)",
+      "Green olives (5 units)",
+      "Unsalted almonds (6 units)",
+      "GF vegan margarine (1 tsp)",
+      "Toasted sesame seeds (1 tsp — counts as daily fat)"
+    ]
   },
   no: {
-    prot: ["Grillet kylling (90g)","Magert stekt kjøtt (90g)","Bakt fisk (90g)","Hermetisk tunfisk i vann (90g)","Bakt kalkun (90g)","2 eggehviter","Luftfriterte fiskekaker (90g)","Revet kylling (90g)","Mager kjøttdeig (90g)","Kalkunskinke (3 skiver)"],
-    carb: ["Hvit ris (½ kopp)","Kokt kassava (120g)","Dampet søtpotet (1)","Medium arepa (1)","Kassavabrød (60g)","Bakt potet (1)","Maisballer (2)","Banantortilla (1)","Glutenfrie riskaker (2 pakker)","Quinoa (½ kopp)"],
-    veg:  ["Sautert squash (1 kopp)","Dampet brokkoli (1 kopp)","Kokte grønne bønner (½ kopp)","Stekt gulrot (½ kopp)","Sautert spinat (1 kopp)","Grillet aubergine (1 kopp)","Tomat- og agurkesalat","Dampet mangold (1 kopp)","Palmehjerter (1 kopp)","Kokt gresskar (½ kopp)"],
-    fat:  ["Avokado (1/8)","Olivenolje (1 ts)","Oliven (5)","Mandler (6)","Glutenfri vegansk margarin (1 ts)"]
+    prot: [
+      "Grillet kyllingbryst (90g)",
+      "Magert stekt oksekjøtt (90g)",
+      "Grillet fisk (90g) — snapper, steinbit eller makrell",
+      "Hermetisk tunfisk i vann (90g)",
+      "Bakt kalkun (90g)",
+      "Grillet svinefilet (90g)",
+      "Sautert mager kjøttdeig (90g)",
+      "Revet kylling i tomatsaus (90g)",
+      "Urtebasert bakt kyllingbryst (90g)",
+      "Air-fryer fiskekaker (90g)",
+      "Ferske grillede sardiner (2 stk)",
+      "Eggehviter, rørt (3 stk)",
+      "Flakket fisk / pisillo (6 ss)",
+      "Kalkunskinke (3 skiver)",
+      "Grillet biff (90g)",
+      "Kyllinggryte i grønnsakssaus (90g)",
+      "Dampet fisk med grønnsaker (90g)"
+    ],
+    carb: [
+      "Grillet medium arepa (1 stk / 100g)",
+      "Hvit ris (½ kopp kokt)",
+      "Kokt kassava (120g)",
+      "Dampet søtpotet (1 medium)",
+      "Kassavabrød (60g)",
+      "Kokt potet (1 medium)",
+      "Kokt grønn banan (¼ stk)",
+      "Bakt moden banan (¼ stk)",
+      "Maisballer (2 stk)",
+      "Maistortilla (1 stk)",
+      "Glutenfrie riskaker (2 pakker)",
+      "Søtpotet-arepa (1 medium)",
+      "Kokt apio / arracacha (120g)",
+      "Kokt yam / ñame (120g)",
+      "Kokt taro / ocumo (120g)",
+      "Kokt quinoa (½ kopp)",
+      "Air-fryer fylt potet (1 stk)"
+    ],
+    veg: [
+      "Squash sautert i olivenolje (1 kopp)",
+      "Dampet brokkoli med sitron (1 kopp)",
+      "Kokte grønne bønner (½ kopp)",
+      "Ovnsbakt gulrot (½ kopp)",
+      "Spinat sautert med hvitløk (1 kopp)",
+      "Grillet aubergine (1 kopp)",
+      "Tomat, agurk og vårløksalat",
+      "Dampet mangold (1 kopp)",
+      "Palmehjerter med sitron og koriander (1 kopp)",
+      "Kokt gresskar / auyama (½ kopp)",
+      "Brønnkarse- og tomatsalat",
+      "Kokt chayote (1 kopp)",
+      "Gresskarkremsuppe uten mel (1 kopp)",
+      "Blandet salat: salat, tomat, agurk",
+      "Sauterte sopp (1 kopp)",
+      "Sautert kål (1 kopp)",
+      "Selleri med tomat og basilikum",
+      "Dampet blomkål (1 kopp)"
+    ],
+    fat: [
+      "Avokado (1/8 stk)",
+      "Ekstra jomfru olivenolje (1 ts)",
+      "Grønne oliven (5 stk)",
+      "Usaltede mandler (6 stk)",
+      "Glutenfri vegansk margarin (1 ts)",
+      "Ristede sesamfrø (1 ts — teller som dagens fett)"
+    ]
   }
 };
 
@@ -1242,7 +1620,20 @@ function applyLang() {
   });
   // water count label
   renderWaterCount();
+
+  // Apple Health
+  const ahStrings = {
+    es: { sub: 'Exporta desde la app Salud → tu foto → Exportar datos → sube el XML aquí', btn: '📂 Seleccionar archivo XML' },
+    en: { sub: 'Export from Health app → your photo → Export All → upload the XML here', btn: '📂 Select XML file' },
+    no: { sub: 'Eksporter fra Helse-app → ditt bilde → Eksporter data → last opp XML her', btn: '📂 Velg XML-fil' }
+  };
+  if (document.getElementById('ahSub')) document.getElementById('ahSub').textContent = ahStrings[lang]?.sub || ahStrings.es.sub;
+  if (document.getElementById('ahBtnLabel')) document.getElementById('ahBtnLabel').textContent = ahStrings[lang]?.btn || ahStrings.es.btn;
+  // PWA banner
+  const pwaStr = { es: '📲 Instalar Plan Mafer en tu teléfono', en: '📲 Install Plan Mafer on your phone', no: '📲 Installer Plan Mafer på telefonen' };
+  if (document.getElementById('pwaBannerText')) document.getElementById('pwaBannerText').textContent = pwaStr[lang] || pwaStr.es;
 }
+
 
 /* ============================================================
    PROGRESS BAR
@@ -1296,12 +1687,22 @@ function renderPlan() {
     { key: `d${d}_d`,  label: t('mealD'),  body: m.d,          checkable: true,  cls: 'meal-d'  },
   ];
 
+  const swapOverrides = JSON.parse(localStorage.getItem('mafer_swaps') || '{}');
+  const swapHintText = lang === 'es' ? '↔ Toca para sustituir' : lang === 'en' ? '↔ Tap to swap' : '↔ Trykk for å bytte';
+
   document.getElementById('planContent').innerHTML = meals.map(meal => {
     const done = !!mealChecks[meal.key];
+    const baseType = meal.key.replace(/d\d+_/, '');
+    const canSwap = ['b','l','d'].includes(baseType);
+    const swapIdx = swapOverrides[meal.key];
+    const swapOptions = SWAPS[baseType]?.[lang] || SWAPS[baseType]?.['es'];
+    const bodyText = (canSwap && swapIdx !== undefined && swapOptions) ? swapOptions[swapIdx] : meal.body;
+
     return `
       <div class="card ${meal.cls}${done ? ' checked' : ''}" id="card-${meal.key}">
         <div class="meal-title">${meal.label}</div>
-        <div class="meal-body">${meal.body}</div>
+        <div class="meal-body">${bodyText}</div>
+        ${canSwap ? `<div class="swap-hint" onclick="openSwap('${meal.key}', ${d})">${swapHintText}</div>` : ''}
         <button class="check-btn" onclick="toggleMeal('${meal.key}', ${d})" aria-label="Marcar como completado"></button>
       </div>`;
   }).join('');
@@ -1513,6 +1914,208 @@ function showToast(msg) {
   toast.textContent = msg;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+
+/* ============================================================
+   MEAL SWAP OPTIONS — per nutritionist food list substitutions
+   Grouped by meal type. All within same caloric/macro group.
+   ============================================================ */
+const SWAPS = {
+  b: {  // Breakfast protein swaps
+    es: ["Queso de cabra (90g)","Queso semi duro (90g)","Jamón de pavo (3 reb)","Pollo esmechado (90g)","Carne molida magra (90g)","Pavo (90g)","Atún al natural (90g)","2 claras + 1 huevo entero","Pisillo de pescado (6 cdas)","Sardinas frescas (2 und)"],
+    en: ["Goat cheese (90g)","Semi-hard cheese (90g)","Turkey ham (3 slices)","Shredded chicken (90g)","Lean ground beef (90g)","Turkey (90g)","Canned tuna (90g)","2 whites + 1 whole egg","Flaked fish (6 tbsp)","Fresh sardines (2 units)"],
+    no: ["Geitost (90g)","Halvfast ost (90g)","Kalkunskinke (3 skiver)","Revet kylling (90g)","Mager kjøttdeig (90g)","Kalkun (90g)","Hermetisk tunfisk (90g)","2 hviter + 1 helt egg","Flakket fisk (6 ss)","Ferske sardiner (2 stk)"]
+  },
+  l: {  // Lunch protein swaps
+    es: ["Pechuga de pollo a la plancha (90g)","Bistec de res magro (90g)","Pescado al horno: carite, pargo o mero (90g)","Atún al ajillo (90g)","Lomo de cerdo a la plancha (90g)","Carne molida en hamburguesa (90g)","Pollo guisado sin harina (90g)","Sardinas frescas (2 und)","Croquetas de pescado AF (90g)","Pisillo de pescado (6 cdas)"],
+    en: ["Grilled chicken breast (90g)","Lean beef steak (90g)","Baked fish: snapper, grouper or mackerel (90g)","Garlic tuna (90g)","Grilled pork loin (90g)","Ground beef burger (90g)","Chicken stew without flour (90g)","Fresh sardines (2 units)","AF fish croquettes (90g)","Flaked fish (6 tbsp)"],
+    no: ["Grillet kyllingbryst (90g)","Mager biffstek (90g)","Bakt fisk: snapper, steinbit eller makrell (90g)","Hvitløkstunfisk (90g)","Grillet svinefilet (90g)","Kjøttdeigburger (90g)","Kyllinggryte uten mel (90g)","Ferske sardiner (2 stk)","Luftfriterte fiskekaker (90g)","Flakket fisk (6 ss)"]
+  },
+  d: {  // Dinner swaps (lighter)
+    es: ["Ensalada de atún (90g)","Tortilla de calabacín + 2 claras","Sopa de auyama + carne magra (90g)","Jamón de pavo + galletas de arroz (2 paq)","Queso búfala (30g) + ensalada caprese","Pollo esmechado + arepa pequeña","Pisillo de pescado + casabe (40g)","Hamburguesa de carne (90g) + lechuga wrap"],
+    en: ["Tuna salad (90g)","Zucchini omelette + 2 egg whites","Pumpkin soup + lean beef (90g)","Turkey ham + rice crackers (2 packs)","Buffalo cheese (30g) + caprese salad","Shredded chicken + small arepa","Flaked fish + cassava bread (40g)","Beef burger (90g) + lettuce wrap"],
+    no: ["Tunfisksalat (90g)","Squashomelett + 2 eggehviter","Gresskarsuppe + magert kjøtt (90g)","Kalkunskinke + riskaker (2 pakker)","Bøffelost (30g) + caprese-salat","Revet kylling + liten arepa","Flakket fisk + kassavabrød (40g)","Kjøttdeigburger (90g) + salatblad-wrap"]
+  }
+};
+
+/* ============================================================
+   MEAL SWAP UI
+   ============================================================ */
+let swapContext = null;
+
+function openSwap(mealType, day) {
+  const baseType = mealType.replace(/d\d+_/, ''); // e.g. 'd3_l' → 'l'
+  const swapList = SWAPS[baseType];
+  if (!swapList) return;
+
+  swapContext = { mealType, day };
+  const options = swapList[lang] || swapList['es'];
+
+  document.getElementById('swapTitle').textContent =
+    lang === 'es' ? 'Opciones de sustitución' :
+    lang === 'en' ? 'Meal swap options' : 'Alternativer';
+
+  document.getElementById('swapOptions').innerHTML = options.map((opt, i) =>
+    `<div class="swap-option" onclick="applySwap(${i})">${opt}</div>`
+  ).join('');
+
+  document.getElementById('swapCloseBtn').textContent =
+    lang === 'es' ? 'Cerrar' : lang === 'en' ? 'Close' : 'Lukk';
+
+  document.getElementById('swapPanel').classList.add('open');
+  document.getElementById('swapOverlay').classList.add('open');
+}
+
+function applySwap(optionIndex) {
+  if (!swapContext) return;
+  const { mealType, day } = swapContext;
+  const baseType = mealType.replace(/d\d+_/, '');
+  const options = SWAPS[baseType]?.[lang] || SWAPS[baseType]?.['es'];
+  if (!options) return;
+
+  // Store swap override
+  let swapOverrides = JSON.parse(localStorage.getItem('mafer_swaps') || '{}');
+  swapOverrides[mealType] = optionIndex;
+  localStorage.setItem('mafer_swaps', JSON.stringify(swapOverrides));
+
+  closeSwap();
+  renderPlan();
+  showToast(lang === 'es' ? '↔ Comida sustituida ✓' : lang === 'en' ? '↔ Meal swapped ✓' : '↔ Byttet ✓');
+}
+
+function closeSwap() {
+  document.getElementById('swapPanel').classList.remove('open');
+  document.getElementById('swapOverlay').classList.remove('open');
+  swapContext = null;
+}
+
+/* ============================================================
+   APPLE HEALTH XML IMPORT
+   ============================================================ */
+function importAppleHealth(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const status = document.getElementById('ahStatus');
+  status.style.color = '#FF9F0A';
+  status.textContent = lang === 'es' ? 'Leyendo archivo...' : lang === 'en' ? 'Reading file...' : 'Leser fil...';
+
+  const processXML = (xmlText) => {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xmlText, 'text/xml');
+
+      // Apple Health glucose identifiers
+      const glucoseTypes = [
+        'HKQuantityTypeIdentifierBloodGlucose'
+      ];
+
+      let records = [];
+      glucoseTypes.forEach(type => {
+        const nodes = doc.querySelectorAll(\`Record[type="\${type}"]\`);
+        nodes.forEach(node => {
+          const val = parseFloat(node.getAttribute('value'));
+          const unit = node.getAttribute('unit') || 'mg/dL';
+          const dateStr = node.getAttribute('startDate') || node.getAttribute('endDate') || '';
+
+          // Convert mmol/L to mg/dL if needed
+          const mgdl = unit.includes('mmol') ? Math.round(val * 18.016) : Math.round(val);
+
+          if (!isNaN(mgdl) && mgdl > 0 && dateStr) {
+            const d = new Date(dateStr);
+            records.push({
+              date: d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+              gluc: String(mgdl),
+              symp: '',
+              note: '📱 Apple Health'
+            });
+          }
+        });
+      });
+
+      if (records.length === 0) {
+        status.style.color = '#FF6B6B';
+        status.textContent = lang === 'es' ? '⚠️ No se encontraron datos de glucosa' :
+                             lang === 'en' ? '⚠️ No glucose data found' : '⚠️ Ingen glukosedata funnet';
+        return;
+      }
+
+      // Sort newest first, deduplicate by date+value
+      records.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const existingKeys = new Set(healthLogs.map(l => l.date + l.gluc));
+      const newRecords = records.filter(r => !existingKeys.has(r.date + r.gluc));
+
+      healthLogs = [...newRecords, ...healthLogs];
+      localStorage.setItem('mafer_logs', JSON.stringify(healthLogs));
+      renderLogs();
+      renderSparkline();
+
+      status.style.color = '#30D158';
+      status.textContent = lang === 'es' ? \`✅ \${newRecords.length} lecturas importadas\` :
+                           lang === 'en' ? \`✅ \${newRecords.length} readings imported\` :
+                           \`✅ \${newRecords.length} målinger importert\`;
+
+      input.value = '';
+    } catch (e) {
+      status.style.color = '#FF6B6B';
+      status.textContent = lang === 'es' ? '❌ Error al leer el archivo' :
+                           lang === 'en' ? '❌ Could not read file' : '❌ Kunne ikke lese filen';
+    }
+  };
+
+  if (file.name.endsWith('.xml')) {
+    const reader = new FileReader();
+    reader.onload = e => processXML(e.target.result);
+    reader.readAsText(file);
+  } else if (file.name.endsWith('.zip')) {
+    // For ZIP: user needs to extract and upload the export.xml inside
+    status.style.color = '#FF9F0A';
+    status.textContent = lang === 'es' ? '💡 Extrae el ZIP y sube el archivo export.xml' :
+                         lang === 'en' ? '💡 Unzip it and upload the export.xml file' :
+                         '💡 Pakk ut ZIP og last opp export.xml';
+  }
+}
+
+/* ============================================================
+   PWA — Service Worker + Install Prompt
+   ============================================================ */
+let pwaPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  pwaPrompt = e;
+  const dismissed = localStorage.getItem('mafer_pwa_dismissed');
+  if (!dismissed) {
+    document.getElementById('pwaBanner').classList.add('show');
+  }
+});
+
+function installPWA() {
+  if (!pwaPrompt) return;
+  pwaPrompt.prompt();
+  pwaPrompt.userChoice.then(result => {
+    if (result.outcome === 'accepted') {
+      document.getElementById('pwaBanner').classList.remove('show');
+      localStorage.setItem('mafer_pwa_dismissed', '1');
+    }
+  });
+}
+
+function dismissPWA() {
+  document.getElementById('pwaBanner').classList.remove('show');
+  localStorage.setItem('mafer_pwa_dismissed', '1');
+}
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwaBanner').classList.remove('show');
+});
+
+/* Service Worker registration */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
 }
 
 /* ============================================================

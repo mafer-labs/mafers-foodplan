@@ -1,645 +1,1525 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan Nutricional Mafer</title>
-    <style>
-        :root {
-            --primary: #4CAF50; /* Green */
-            --secondary: #FF9800; /* Orange */
-            --accent: #2196F3; /* Blue */
-            --bg: #F5F7FA;
-            --card: #ffffff;
-            --text: #333333;
-            --done: #e0e0e0;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding-bottom: 90px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Plan Mafer 🍎</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       CSS VARIABLES & RESET
+       ============================================ */
+    :root {
+      --green-dark:   #1B4332;
+      --green:        #2D6A4F;
+      --green-mid:    #40916C;
+      --green-light:  #74C69D;
+      --green-pale:   #D8F3DC;
+      --cream:        #FDFBF7;
+      --warm-white:   #F8F4EE;
+      --card:         #FFFFFF;
+      --text:         #1A2E22;
+      --text-mid:     #3D5A47;
+      --text-muted:   #7A9E8A;
+      --orange:       #E07A5F;
+      --orange-light: #FDEBD0;
+      --blue:         #3D7CBF;
+      --blue-light:   #DBEAFE;
+      --border:       #D4E6DB;
+      --shadow:       rgba(45, 106, 79, 0.08);
+      --radius:       16px;
+      --radius-sm:    10px;
+      --nav-h:        80px;
+      --header-h:     160px;
+    }
 
-        header {
-            background: linear-gradient(135deg, var(--primary), #2E7D32);
-            color: white;
-            padding: 20px 20px 30px 20px;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: relative;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        h1 { margin: 0; font-size: 1.5rem; }
-        p { margin: 5px 0; font-size: 0.9rem; opacity: 0.9; }
+    html { scroll-behavior: smooth; }
 
-        /* Language Switcher */
-        .lang-switch {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 15px;
-            padding: 5px;
-            display: flex;
-            gap: 5px;
-        }
-        .lang-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-weight: bold;
-            font-size: 0.8rem;
-            opacity: 0.6;
-            cursor: pointer;
-        }
-        .lang-btn.active { opacity: 1; text-decoration: underline; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: calc(var(--nav-h) + 16px);
+      -webkit-font-smoothing: antialiased;
+    }
 
-        /* Navigation */
-        nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
+    /* ============================================
+       HEADER
+       ============================================ */
+    header {
+      background: var(--green-dark);
+      background-image:
+        radial-gradient(ellipse at 10% 50%, rgba(64,145,108,0.4) 0%, transparent 60%),
+        radial-gradient(ellipse at 90% 20%, rgba(116,198,157,0.2) 0%, transparent 50%);
+      color: white;
+      padding: 20px 20px 0;
+      position: relative;
+      overflow: hidden;
+    }
 
-        nav button {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 0.8rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-weight: bold;
-        }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
 
-        nav button.active { color: var(--primary); }
-        nav button span { font-size: 1.5rem; margin-bottom: 2px; }
+    .app-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
 
-        /* Sections */
-        .section { display: none; padding: 20px; animation: fadeIn 0.3s; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .app-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-top: 3px;
+    }
 
-        /* Day Scroller */
-        .day-scroller {
-            display: flex;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            gap: 10px;
-            margin-bottom: 15px;
-            scrollbar-width: none;
-        }
-        .day-btn {
-            background: white;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            padding: 8px 15px;
-            border-radius: 20px;
-            white-space: nowrap;
-            font-weight: bold;
-            position: relative;
-        }
-        .day-btn.active { background: var(--primary); color: white; }
-        .day-btn.completed-day::after {
-            content: '✓';
-            font-size: 0.7rem;
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--secondary);
-            color: white;
-            border-radius: 50%;
-            width: 15px;
-            height: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    /* Language switcher */
+    .lang-switch {
+      display: flex;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .lang-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.55);
+      font-weight: 800;
+      font-size: 0.72rem;
+      padding: 4px 9px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .lang-btn.active {
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
 
-        /* Meal Cards with Checkbox Logic */
-        .card {
-            background: var(--card);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border-left: 5px solid var(--primary);
-            position: relative;
-            transition: background 0.3s;
-        }
-        
-        .card.checked {
-            background: #f0f0f0;
-            border-left-color: #bbb;
-        }
-        .card.checked .meal-title, .card.checked .meal-content {
-            opacity: 0.5;
-            text-decoration: line-through;
-        }
+    /* Progress bar */
+    .header-progress {
+      margin-bottom: 0;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 700;
+      opacity: 0.75;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+    .progress-track {
+      height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-light), #B7E4C7);
+      border-radius: 10px;
+      transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
 
-        .check-circle {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 24px;
-            height: 24px;
-            border: 2px solid #ddd;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        .card.checked .check-circle {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-        .card.checked .check-circle::after {
-            content: '✓';
-            color: white;
-            position: absolute;
-            top: 0;
-            left: 5px;
-            font-size: 16px;
-        }
+    /* Day scroller lives in header bottom */
+    .day-scroller-wrap {
+      margin: 14px -20px 0;
+      padding: 0 20px 16px;
+      overflow-x: auto;
+      display: flex;
+      gap: 8px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .day-scroller-wrap::-webkit-scrollbar { display: none; }
 
-        .meal-title { font-weight: bold; color: #555; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
-        .meal-content { margin-top: 5px; font-size: 1rem; padding-right: 30px; }
-        .note { font-size: 0.8rem; color: #666; font-style: italic; margin-top: 5px; }
+    .day-btn {
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.65);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+    .day-btn.active {
+      background: white;
+      border-color: white;
+      color: var(--green-dark);
+    }
+    .day-btn.done::after {
+      content: '✓';
+      position: absolute;
+      top: -6px;
+      right: -4px;
+      background: var(--orange);
+      color: white;
+      font-size: 0.6rem;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      line-height: 14px;
+      text-align: center;
+    }
 
-        /* Buttons & Inputs */
-        input, select, textarea {
-            width: 100%; padding: 10px; margin: 5px 0 15px 0;
-            border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit;
-        }
-        button.action-btn {
-            background: var(--secondary); color: white; border: none;
-            padding: 12px; width: 100%; border-radius: 10px;
-            font-size: 1rem; font-weight: bold; cursor: pointer;
-        }
-        .random-btn {
-            background: var(--primary); color: white; border: none; padding: 15px;
-            width: 100%; border-radius: 12px; font-size: 1.1rem; font-weight: bold;
-            margin-bottom: 20px; box-shadow: 0 4px 0 #388E3C; transition: transform 0.1s;
-        }
-        .random-btn:active { transform: translateY(4px); box-shadow: none; }
-        
-        .reset-btn {
-            background: none; border: 1px solid red; color: red;
-            padding: 10px; width: 100%; border-radius: 8px; margin-top: 20px;
-        }
+    /* ============================================
+       NAVIGATION
+       ============================================ */
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      background: white;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+    }
 
-    </style>
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .nav-btn .nav-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      transition: transform 0.2s;
+    }
+    .nav-btn.active { color: var(--green); }
+    .nav-btn.active .nav-icon { transform: scale(1.15); }
+
+    /* ============================================
+       SECTIONS
+       ============================================ */
+    .section {
+      display: none;
+      padding: 20px;
+      animation: fadeUp 0.25s ease both;
+    }
+    .section.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================
+       CARDS
+       ============================================ */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 12px var(--shadow);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: background 0.25s, opacity 0.25s;
+    }
+
+    /* meal type accent lines */
+    .card.meal-b  { border-left: 4px solid var(--green-mid); }
+    .card.meal-sa { border-left: 4px solid var(--orange); }
+    .card.meal-l  { border-left: 4px solid var(--green); }
+    .card.meal-sp { border-left: 4px solid var(--orange); }
+    .card.meal-d  { border-left: 4px solid var(--blue); }
+
+    /* checked state */
+    .card.checked {
+      background: var(--warm-white);
+      border-color: var(--green-pale);
+    }
+    .card.checked .meal-title,
+    .card.checked .meal-body {
+      opacity: 0.4;
+      text-decoration: line-through;
+      text-decoration-color: var(--green-light);
+    }
+
+    .meal-title {
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      padding-right: 36px;
+      transition: opacity 0.25s;
+    }
+
+    .meal-body {
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.45;
+      padding-right: 36px;
+      transition: opacity 0.25s;
+    }
+
+    .meal-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 5px;
+      font-weight: 400;
+    }
+
+    /* check circle button */
+    .check-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      flex-shrink: 0;
+    }
+    .check-btn:active { transform: scale(0.88); }
+    .card.checked .check-btn {
+      background: var(--green-mid);
+      border-color: var(--green-mid);
+    }
+    .check-btn::after {
+      content: '';
+      width: 0; height: 0;
+      opacity: 0;
+      transition: all 0.15s;
+    }
+    .card.checked .check-btn::after {
+      content: '✓';
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 900;
+      opacity: 1;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    /* snack cards — not checkable */
+    .card.snack-static {
+      border-left: 4px solid var(--orange);
+      background: var(--orange-light);
+      border-color: rgba(224, 122, 95, 0.2);
+    }
+    .card.snack-static .meal-body { color: var(--text-mid); }
+
+    /* ============================================
+       SECTION HEADINGS
+       ============================================ */
+    .section-heading {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .section-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 18px;
+      letter-spacing: 0.2px;
+    }
+
+    /* ============================================
+       IDEAS TAB
+       ============================================ */
+    .gen-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .gen-btn {
+      border: none;
+      border-radius: var(--radius);
+      padding: 18px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .gen-btn:active { transform: scale(0.96); }
+    .gen-btn .gen-icon { font-size: 1.6rem; }
+    .gen-btn.lunch {
+      background: var(--green-dark);
+      color: white;
+      box-shadow: 0 4px 14px rgba(27,67,50,0.3);
+    }
+    .gen-btn.dinner {
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 4px 14px rgba(61,124,191,0.3);
+    }
+
+    .result-card {
+      background: white;
+      border: 1.5px solid var(--green-pale);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 12px;
+      display: none;
+      animation: fadeUp 0.2s ease both;
+    }
+    .result-card.visible { display: block; }
+    .result-title {
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--green-mid);
+      margin-bottom: 10px;
+    }
+    .result-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--green-pale);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-row .cat {
+      font-size: 0.65rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      width: 56px;
+      flex-shrink: 0;
+    }
+
+    .reminders-card {
+      background: var(--green-pale);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-top: 4px;
+    }
+    .reminders-title {
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    .reminder-item {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--green-dark);
+      padding: 5px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+    .reminder-item .r-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* ============================================
+       HEALTH / TRACKER TAB
+       ============================================ */
+
+    /* Water tracker */
+    .water-widget {
+      background: linear-gradient(135deg, #EBF5FB, #D6EAF8);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 12px;
+      border: 1px solid #AED6F1;
+    }
+    .water-title {
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #1A5276;
+      margin-bottom: 12px;
+    }
+    .water-glasses {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+    .glass-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 1.5rem;
+      line-height: 1;
+      transition: transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .glass-btn:active { transform: scale(0.85); }
+    .glass-icon { transition: filter 0.2s, transform 0.2s; }
+    .glass-btn.filled .glass-icon { filter: none; transform: scale(1.1); }
+    .glass-btn.empty .glass-icon { filter: grayscale(1); opacity: 0.35; }
+    .water-count {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1A5276;
+      opacity: 0.8;
+    }
+
+    /* Glucose sparkline */
+    .glucose-widget {
+      background: white;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px var(--shadow);
+    }
+    .glucose-title {
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .sparkline-wrap {
+      width: 100%;
+      height: 56px;
+      position: relative;
+    }
+    .sparkline-empty {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Log form */
+    .log-form {
+      background: white;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px var(--shadow);
+    }
+    .form-title {
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      margin-bottom: 5px;
+      letter-spacing: 0.3px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--cream);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--green-mid);
+      background: white;
+    }
+    .form-group textarea { resize: vertical; min-height: 70px; }
+
+    .save-btn {
+      width: 100%;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.3px;
+    }
+    .save-btn:active { transform: scale(0.97); background: var(--green-dark); }
+
+    /* Log history */
+    .history-title {
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin: 20px 0 10px;
+    }
+
+    .log-entry {
+      background: white;
+      border-radius: var(--radius-sm);
+      padding: 13px 15px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--blue);
+    }
+    .log-date {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+      margin-bottom: 5px;
+    }
+    .log-row {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .log-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .clear-btn {
+      width: 100%;
+      background: none;
+      border: 1.5px solid #FFCDD2;
+      color: #C62828;
+      border-radius: var(--radius-sm);
+      padding: 11px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.15s;
+    }
+    .clear-btn:active { background: #FFEBEE; }
+
+    /* Reset cycle button */
+    .reset-cycle-btn {
+      width: 100%;
+      background: none;
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.15s;
+      letter-spacing: 0.2px;
+    }
+    .reset-cycle-btn:active { background: var(--warm-white); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: calc(var(--nav-h) + 16px);
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--green-dark);
+      color: white;
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 2000;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="lang-switch">
-            <button class="lang-btn active" onclick="setLang('es')">ES</button>
-            <button class="lang-btn" onclick="setLang('en')">EN</button>
-            <button class="lang-btn" onclick="setLang('no')">NO</button>
-        </div>
-        <h1 id="appTitle">🍎 Plan Mafer</h1>
-        <p id="appSubtitle">1300 Kcal | Sin Gluten | Low FODMAP</p>
-    </header>
-
-    <div id="plan" class="section active">
-        <div class="day-scroller" id="dayScroller"></div>
-        
-        <div id="cycle-info" style="text-align: center; margin-bottom: 10px; font-size: 0.85rem; color: #666;">
-            </div>
-
-        <div id="menuContent"></div>
-        
-        <button class="reset-btn" onclick="resetCycle()" id="resetBtn">Reiniciar Ciclo (Start Over)</button>
+<!-- ================================================
+     HEADER
+     ================================================ -->
+<header>
+  <div class="header-top">
+    <div>
+      <div class="app-name">Plan Mafer 🍎</div>
+      <div class="app-tag" id="appTag">1300 kcal · Sin Gluten · Low FODMAP</div>
     </div>
-
-    <div id="ideas" class="section">
-        <h2 id="ideaTitle">🎲 ¿Qué comemos hoy?</h2>
-        <p id="ideaSub">Genera una combinación válida.</p>
-        
-        <button class="random-btn" onclick="generateRandomMeal('lunch')" id="btnLunch">Generar Almuerzo</button>
-        <button class="random-btn" style="background-color: var(--accent); box-shadow: 0 4px 0 #1976D2;" onclick="generateRandomMeal('dinner')" id="btnDinner">Generar Cena</button>
-        
-        <div id="randomResult" class="card" style="display:none; border-left-color: var(--secondary);">
-            <div class="meal-title" id="resTitle">Sugerencia:</div>
-            <div class="meal-content" id="randomText"></div>
-            <div class="note" id="resNote">Recuerda: Preparaciones a la plancha, horno o air fryer.</div>
-        </div>
-
-        <div class="card">
-            <h3 id="remTitle">Recordatorios</h3>
-            <ul style="padding-left: 20px; font-size:0.9rem;">
-                <li id="rem1"><strong>Vegetales:</strong> 2 tazas cocidos.</li>
-                <li id="rem2"><strong>Frutas:</strong> 3 raciones al día.</li>
-                <li id="rem3"><strong>Agua:</strong> 8 vasos.</li>
-                <li id="rem4"><strong>Prohibido:</strong> Azúcar, Lácteos con lactosa.</li>
-            </ul>
-        </div>
+    <div class="lang-switch">
+      <button class="lang-btn active" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('no')">NO</button>
     </div>
+  </div>
 
-    <div id="tracker" class="section">
-        <h2 id="trackTitle">📊 Diario de Salud</h2>
-        <div class="card">
-            <div class="meal-title" id="newLogTitle">Nuevo Registro</div>
-            <label id="lblGluc">Glucosa (mg/dL):</label>
-            <input type="number" id="glucose" placeholder="95">
-            
-            <label id="lblSymp">Síntomas:</label>
-            <input type="text" id="symptoms" placeholder="...">
-            
-            <label id="lblNote">Notas:</label>
-            <textarea id="notes" rows="2" placeholder="..."></textarea>
-            
-            <button class="action-btn" onclick="saveLog()" id="btnSave">Guardar Registro</button>
-        </div>
-
-        <h3 id="histTitle">Historial</h3>
-        <div id="logHistory"></div>
-        <br>
-        <button onclick="clearLogs()" style="color: red; background: none; border: none; width: 100%; text-align: center;" id="btnClear">Borrar Historial</button>
+  <div class="header-progress">
+    <div class="progress-label">
+      <span id="progressLabel">Progreso del ciclo</span>
+      <span id="progressPct">0%</span>
     </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
 
-    <nav>
-        <button class="active" onclick="switchTab('plan', this)">
-            <span>📅</span> <span class="nav-text" data-key="navPlan">Plan</span>
-        </button>
-        <button onclick="switchTab('ideas', this)">
-            <span>👩‍🍳</span> <span class="nav-text" data-key="navIdeas">Ideas</span>
-        </button>
-        <button onclick="switchTab('tracker', this)">
-            <span>📈</span> <span class="nav-text" data-key="navHealth">Salud</span>
-        </button>
-    </nav>
+  <div class="day-scroller-wrap" id="dayScroller"></div>
+</header>
 
-    <script>
-        // --- TRANSLATIONS CONFIG ---
-        let currentLang = 'es';
-        
-        const uiText = {
-            es: {
-                subtitle: "1300 Kcal | Sin Gluten | Low FODMAP",
-                cycleInfo: "Marca las comidas completadas para seguir tu progreso.",
-                reset: "Reiniciar Ciclo",
-                ideaTitle: "🎲 ¿Qué comemos hoy?",
-                ideaSub: "Genera una combinación válida.",
-                btnLunch: "Generar Almuerzo",
-                btnDinner: "Generar Cena",
-                resTitle: "Sugerencia",
-                resNote: "Recuerda: Preparaciones a la plancha, horno o air fryer.",
-                remTitle: "Recordatorios",
-                rem1: "<strong>Vegetales:</strong> 2 tazas cocidos (mejor digestión).",
-                rem2: "<strong>Frutas:</strong> 3 raciones al día.",
-                rem3: "<strong>Agua:</strong> 8 vasos (o infusiones).",
-                rem4: "<strong>Prohibido:</strong> Azúcar, lácteos con lactosa.",
-                trackTitle: "📊 Diario de Salud",
-                newLog: "Nuevo Registro",
-                lblGluc: "Glucosa (mg/dL):",
-                lblSymp: "Síntomas (Insulina/Hígado):",
-                lblNote: "Notas:",
-                btnSave: "Guardar Registro",
-                histTitle: "Historial",
-                btnClear: "Borrar Historial",
-                navPlan: "Plan",
-                navIdeas: "Ideas",
-                navHealth: "Salud",
-                mealB: "Desayuno",
-                mealL: "Almuerzo",
-                mealD: "Cena",
-                mealS: "Merienda",
-                alertSaved: "Registro guardado ✨",
-                alertReset: "¿Reiniciar el ciclo de 10 días? Esto borrará tus marcas."
-            },
-            en: {
-                subtitle: "1300 Kcal | Gluten Free | Low FODMAP",
-                cycleInfo: "Check off meals to track your 10-day progress.",
-                reset: "Reset Cycle",
-                ideaTitle: "🎲 What to eat?",
-                ideaSub: "Generate a valid combo.",
-                btnLunch: "Generate Lunch",
-                btnDinner: "Generate Dinner",
-                resTitle: "Suggestion",
-                resNote: "Remember: Grilled, baked, or air fryer only.",
-                remTitle: "Reminders",
-                rem1: "<strong>Veggies:</strong> 2 cups cooked (better digestion).",
-                rem2: "<strong>Fruits:</strong> 3 portions per day.",
-                rem3: "<strong>Water:</strong> 8 glasses (or tea).",
-                rem4: "<strong>Forbidden:</strong> Sugar, lactose dairy.",
-                trackTitle: "📊 Health Log",
-                newLog: "New Entry",
-                lblGluc: "Glucose (mg/dL):",
-                lblSymp: "Symptoms (Insulin/Liver):",
-                lblNote: "Notes:",
-                btnSave: "Save Entry",
-                histTitle: "History",
-                btnClear: "Clear History",
-                navPlan: "Plan",
-                navIdeas: "Ideas",
-                navHealth: "Health",
-                mealB: "Breakfast",
-                mealL: "Lunch",
-                mealD: "Dinner",
-                mealS: "Snack",
-                alertSaved: "Entry saved ✨",
-                alertReset: "Reset the 10-day cycle? This will clear your checkmarks."
-            },
-            no: {
-                subtitle: "1300 Kcal | Glutenfri | Lav FODMAP",
-                cycleInfo: "Merk måltider for å spore fremgangen din.",
-                reset: "Nullstill Syklus",
-                ideaTitle: "🎲 Hva skal vi spise?",
-                ideaSub: "Generer en gyldig kombinasjon.",
-                btnLunch: "Generer Lunsj",
-                btnDinner: "Generer Middag",
-                resTitle: "Forslag",
-                resNote: "Husk: Grillet, bakt eller air fryer.",
-                remTitle: "Påminnelser",
-                rem1: "<strong>Grønnsaker:</strong> 2 kopper kokt.",
-                rem2: "<strong>Frukt:</strong> 3 porsjoner per dag.",
-                rem3: "<strong>Vann:</strong> 8 glass (eller te).",
-                rem4: "<strong>Forbudt:</strong> Sukker, laktose.",
-                trackTitle: "📊 Helselogg",
-                newLog: "Ny Oppføring",
-                lblGluc: "Glukose (mg/dL):",
-                lblSymp: "Symptomer:",
-                lblNote: "Notater:",
-                btnSave: "Lagre",
-                histTitle: "Historikk",
-                btnClear: "Slett Historikk",
-                navPlan: "Plan",
-                navIdeas: "Ideer",
-                navHealth: "Helse",
-                mealB: "Frokost",
-                mealL: "Lunsj",
-                mealD: "Middag",
-                mealS: "Mellommåltid",
-                alertSaved: "Lagret ✨",
-                alertReset: "Nullstill 10-dagers syklusen?"
-            }
-        };
 
-        // --- MENU DATA (Trilingual) [Source: 1-13, 17-24] ---
-        const menuData = {
-            1: {
-                es: { b: "Queso semi duro (90g) + Arepa Asada (100g) + Aguacate.", l: "Pechuga empanizada (Air Fryer 90g) + Papas (2) + Ensalada.", d: "Hamburguesa de Carne Molida + Casabe + Tomate/Lechuga." },
-                en: { b: "Semi-hard cheese (90g) + Grilled Arepa (100g) + Avocado.", l: "Breaded Chicken (Air Fryer 90g) + Potatoes (2) + Salad.", d: "Beef Burger + Cassava Bread + Tomato/Lettuce." },
-                no: { b: "Halvfast ost (90g) + Grillet Arepa (100g) + Avokado.", l: "Panert kylling (Air Fryer 90g) + Poteter (2) + Salat.", d: "Hamburger + Kassavabrød + Tomat/Salat." }
-            },
-            2: {
-                es: { b: "Jamón de Pavo (3 reb) + Arepa de batata + Alfalfa.", l: "Calabacines rellenos carne molida (90g) + Arroz Blanco.", d: "Ensalada de Atún (90g) + Arepa pequeña + Cebolla." },
-                en: { b: "Turkey Ham (3 slices) + Sweet Potato Arepa + Alfalfa.", l: "Stuffed Zucchini with beef (90g) + White Rice.", d: "Tuna Salad (90g) + Small Arepa + Onion." },
-                no: { b: "Kalkunskinke (3 skiver) + Søtpotet Arepa + Alfalfa.", l: "Fylt Squash med kjøttdeig (90g) + Hvit ris.", d: "Tunfisksalat (90g) + Liten Arepa + Løk." }
-            },
-            3: {
-                es: { b: "Pollo en salsa (90g) + Papas rellenas (2) + Aceite.", l: "Atún al ajillo (90g) + Yuca sancochada + Berros.", d: "Carne molida (4 cdas) + Tortilla maíz (Burrito) + Guacamole." },
-                en: { b: "Chicken in sauce (90g) + Stuffed Potatoes (2) + Oil.", l: "Garlic Tuna (90g) + Boiled Cassava + Watercress.", d: "Minced Meat + Corn Tortilla (Burrito) + Guacamole." },
-                no: { b: "Kylling i saus (90g) + Fylte poteter (2) + Olje.", l: "Hvitløkstunfisk (90g) + Kokt Kassava + Brønnkarse.", d: "Kjøttdeig + Maistortilla (Burrito) + Guacamole." }
-            },
-            4: {
-                es: { b: "Carne Molida magra + Arepa con Ajonjolí + Aguacate.", l: "Arroz con pollo y vegetales + Ensalada.", d: "Jamón y Queso Mozzarella Búfala + Tortilla plátano." },
-                en: { b: "Lean Minced Meat + Sesame Arepa + Avocado.", l: "Chicken and Vegetable Rice + Salad.", d: "Ham & Buffalo Mozzarella + Plantain Tortilla." },
-                no: { b: "Mager kjøttdeig + Sesam Arepa + Avokado.", l: "Ris med kylling og grønnsaker + Salat.", d: "Skinke og bøffelmozzarella + Banantortilla." }
-            },
-            5: {
-                es: { b: "Ensalada de Atún (6 cdas) + Casabe (60g).", l: "Parrilla de Carne con vegetales + Bollitos + Ensalada.", d: "Buñuelos de Yuca (Air Fryer)." },
-                en: { b: "Tuna Salad (6 tbsp) + Cassava Bread (60g).", l: "Grilled Beef with veggies + Corn Dumplings + Salad.", d: "Cassava Fritters (Air Fryer)." },
-                no: { b: "Tunfisksalat (6 ss) + Kassavabrød (60g).", l: "Grillet biff med grønnsaker + Maisboller + Salat.", d: "Kassavaboller (Air Fryer)." }
-            },
-            6: {
-                es: { b: "Pollo esmechado (90g) + Tortilla plátano + Margarina.", l: "Asado Negro (90g) + Arroz (1 tz) + Ensalada.", d: "Jamón de Pavo + Galletas de Arroz (2 paq) + Ensalada." },
-                en: { b: "Shredded Chicken (90g) + Plantain Tortilla + Margarine.", l: "Asado Negro (Beef) + Rice (1 cup) + Salad.", d: "Turkey Ham + Rice Cakes (2 packs) + Salad." },
-                no: { b: "Revet kylling (90g) + Banantortilla + Margarin.", l: "Asado Negro (Oksekjøtt) + Ris (1 kopp) + Salat.", d: "Kalkunskinke + Riskaker (2 pakker) + Salat." }
-            },
-            7: {
-                es: { b: "Pavo (90g) + Crepes harina de arroz + Vegetales.", l: "Pescado al Horno (90g) + Casabe + Ensalada papa.", d: "Queso Amarillo + 1 reb Jamón + Yuca." },
-                en: { b: "Turkey (90g) + Rice Flour Crepes + Veggies.", l: "Baked Fish (90g) + Cassava Bread + Potato Salad.", d: "Yellow Cheese + 1 Ham slice + Cassava." },
-                no: { b: "Kalkun (90g) + Rismelpannekaker + Grønnsaker.", l: "Bakt fisk (90g) + Kassavabrød + Potetsalat.", d: "Gul ost + 1 skinkeskive + Kassava." }
-            },
-            8: {
-                es: { b: "Pollo esmechado (90g) + Arepa asada + Aguacate.", l: "Pollo a la plancha (90g) + Arroz + Brócoli/tomate.", d: "Tortilla calabacín / 2 claras huevo + Jamón rallado." },
-                en: { b: "Shredded Chicken (90g) + Grilled Arepa + Avocado.", l: "Grilled Chicken (90g) + Rice + Broccoli/Tomato.", d: "Zucchini Omelet / 2 egg whites + Grated Ham." },
-                no: { b: "Revet kylling (90g) + Grillet Arepa + Avokado.", l: "Grillet kylling (90g) + Ris + Brokkoli/Tomat.", d: "Squashomelett / 2 eggehviter + Revet skinke." }
-            },
-            9: {
-                es: { b: "Plátano maduro horneado + Queso Búfala.", l: "Hamburguesa carne (90g) + Pan sin gluten + Papa brava.", d: "Ensalada Capresa (30g Búfala) + Galleta soda." },
-                en: { b: "Baked Sweet Plantain + Buffalo Cheese.", l: "Beef Burger (90g) + GF Bun + Spicy Potato.", d: "Caprese Salad (30g Buffalo) + Soda Cracker." },
-                no: { b: "Bakt søtbanan + Bøffelost.", l: "Hamburger (90g) + Glutenfritt brød + Krydret potet.", d: "Caprese-salat (30g Bøffel) + Sodakjeks." }
-            },
-            10: {
-                es: { b: "Queso de cabra (90g) + Arepa mediana + Margarina.", l: "Croquetas de pescado (Air Fryer 90g) + Arroz.", d: "Sopa combinada de auyama/apio + Carne (90g)." },
-                en: { b: "Goat Cheese (90g) + Medium Arepa + Margarine.", l: "Fish Croquettes (Air Fryer 90g) + Rice.", d: "Pumpkin/Celery Soup + Beef (90g)." },
-                no: { b: "Geitost (90g) + Medium Arepa + Margarin.", l: "Fiskekaker (Air Fryer 90g) + Ris.", d: "Gresskar/Sellerisuppe + Kjøtt (90g)." }
-            }
-        };
+<!-- ================================================
+     SECTION: PLAN
+     ================================================ -->
+<div id="section-plan" class="section active">
+  <div id="planContent"></div>
+  <button class="reset-cycle-btn" id="resetBtn" onclick="resetCycle()">↺ Reiniciar ciclo de 10 días</button>
+</div>
 
-        const randomLists = {
-            es: { p: ["Pollo", "Carne", "Pescado", "Atún", "Queso", "Huevos"], s: ["Arroz", "Yuca", "Batata", "Plátano", "Arepa", "Pasta SG"], v: ["Calabacín", "Vainitas", "Zanahoria", "Espinacas", "Berenjena"], f: ["Aguacate", "Aceite Oliva", "Aceitunas"] },
-            en: { p: ["Chicken", "Beef", "Fish", "Tuna", "Cheese", "Eggs"], s: ["Rice", "Cassava", "Swt Potato", "Plantain", "Arepa", "GF Pasta"], v: ["Zucchini", "Green Beans", "Carrot", "Spinach", "Eggplant"], f: ["Avocado", "Olive Oil", "Olives"] },
-            no: { p: ["Kylling", "Kjøtt", "Fisk", "Tunfisk", "Ost", "Egg"], s: ["Ris", "Kassava", "Søtpotet", "Banan", "Arepa", "GF Pasta"], v: ["Squash", "Grønne bønner", "Gulrot", "Spinat", "Aubergine"], f: ["Avokado", "Olivenolje", "Oliven"] }
-        };
 
-        // --- APP STATE ---
-        let completedMeals = JSON.parse(localStorage.getItem('maferCycleChecks') || '{}');
+<!-- ================================================
+     SECTION: IDEAS
+     ================================================ -->
+<div id="section-ideas" class="section">
+  <div class="section-heading" id="ideaHeading">¿Qué comemos?</div>
+  <div class="section-sub" id="ideaSub">Genera una combinación válida al instante</div>
 
-        // --- FUNCTIONS ---
+  <div class="gen-buttons">
+    <button class="gen-btn lunch" onclick="generateMeal('lunch')">
+      <span class="gen-icon">🍲</span>
+      <span id="btnLunch">Almuerzo</span>
+    </button>
+    <button class="gen-btn dinner" onclick="generateMeal('dinner')">
+      <span class="gen-icon">🌙</span>
+      <span id="btnDinner">Cena</span>
+    </button>
+  </div>
 
-        function setLang(lang) {
-            currentLang = lang;
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll(`.lang-btn[onclick="setLang('${lang}')"]`).forEach(b => b.classList.add('active'));
-            
-            // Update static UI
-            const t = uiText[lang];
-            document.getElementById('appSubtitle').innerText = t.subtitle;
-            document.getElementById('cycle-info').innerText = t.cycleInfo;
-            document.getElementById('resetBtn').innerText = t.reset;
-            document.getElementById('ideaTitle').innerText = t.ideaTitle;
-            document.getElementById('ideaSub').innerText = t.ideaSub;
-            document.getElementById('btnLunch').innerText = t.btnLunch;
-            document.getElementById('btnDinner').innerText = t.btnDinner;
-            document.getElementById('resTitle').innerText = t.resTitle;
-            document.getElementById('resNote').innerText = t.resNote;
-            document.getElementById('remTitle').innerText = t.remTitle;
-            document.getElementById('rem1').innerHTML = t.rem1;
-            document.getElementById('rem2').innerHTML = t.rem2;
-            document.getElementById('rem3').innerHTML = t.rem3;
-            document.getElementById('rem4').innerHTML = t.rem4;
-            document.getElementById('trackTitle').innerText = t.trackTitle;
-            document.getElementById('newLogTitle').innerText = t.newLog;
-            document.getElementById('lblGluc').innerText = t.lblGluc;
-            document.getElementById('lblSymp').innerText = t.lblSymp;
-            document.getElementById('lblNote').innerText = t.lblNote;
-            document.getElementById('btnSave').innerText = t.btnSave;
-            document.getElementById('histTitle').innerText = t.histTitle;
-            document.getElementById('btnClear').innerText = t.btnClear;
-            
-            document.querySelectorAll('.nav-text').forEach(el => {
-                el.innerText = t[el.dataset.key];
-            });
+  <div class="result-card" id="resultCard">
+    <div class="result-title" id="resultTitle">Sugerencia</div>
+    <div id="resultRows"></div>
+    <div class="meal-note" id="resultNote" style="margin-top:10px;">🔥 Preparación: a la plancha, horno o air fryer</div>
+  </div>
 
-            renderDays(); // Re-render plan
-        }
+  <div class="reminders-card">
+    <div class="reminders-title" id="remTitle">Recordatorios</div>
+    <div class="reminder-item"><span class="r-icon">🥦</span><span id="rem1">Vegetales: 2 tazas cocidos por comida principal.</span></div>
+    <div class="reminder-item"><span class="r-icon">🍊</span><span id="rem2">Frutas: 3 raciones al día (snacks AM y PM).</span></div>
+    <div class="reminder-item"><span class="r-icon">💧</span><span id="rem3">Agua: 8 vasos o infusiones sin azúcar.</span></div>
+    <div class="reminder-item"><span class="r-icon">🚫</span><span id="rem4">Sin azúcar añadida. Sin lácteos con lactosa.</span></div>
+    <div class="reminder-item"><span class="r-icon">⚡</span><span id="rem5">Aceite de oliva: máximo 1 cdta por comida.</span></div>
+  </div>
+</div>
 
-        function renderDays() {
-            const scroller = document.getElementById('dayScroller');
-            const currentActive = document.querySelector('.day-btn.active')?.innerText.split(' ')[1] || 1;
-            
-            scroller.innerHTML = '';
-            for(let i=1; i<=10; i++) {
-                const btn = document.createElement('button');
-                const isComplete = checkDayCompletion(i);
-                btn.className = `day-btn ${i == currentActive ? 'active' : ''} ${isComplete ? 'completed-day' : ''}`;
-                btn.innerText = `Día ${i}`;
-                btn.onclick = () => showDay(i, btn);
-                scroller.appendChild(btn);
-            }
-            showDay(currentActive);
-        }
 
-        function checkDayCompletion(day) {
-            return completedMeals[`d${day}_b`] && completedMeals[`d${day}_l`] && completedMeals[`d${day}_d`];
-        }
+<!-- ================================================
+     SECTION: HEALTH
+     ================================================ -->
+<div id="section-health" class="section">
+  <div class="section-heading" id="healthHeading">Diario de Salud</div>
+  <div class="section-sub" id="healthSub">Registra tu glucosa, síntomas y agua</div>
 
-        function showDay(day, btnElement) {
-            if(btnElement) {
-                document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-                btnElement.classList.add('active');
-            }
-            
-            const m = menuData[day][currentLang];
-            const t = uiText[currentLang];
-            const ids = { b: `d${day}_b`, l: `d${day}_l`, d: `d${day}_d` };
+  <!-- Water tracker -->
+  <div class="water-widget">
+    <div class="water-title" id="waterTitle">💧 Agua de hoy</div>
+    <div class="water-glasses" id="waterGlasses"></div>
+    <div class="water-count" id="waterCount">0 / 8 vasos</div>
+  </div>
 
-            const html = `
-                <div class="card ${completedMeals[ids.b] ? 'checked' : ''}" onclick="toggleCheck('${ids.b}', ${day})">
-                    <div class="check-circle"></div>
-                    <div class="meal-title">🍳 ${t.mealB}</div>
-                    <div class="meal-content">${m.b}</div>
-                </div>
-                <div class="card" style="border-left-color: var(--secondary);">
-                    <div class="meal-title">🍎 ${t.mealS} AM</div>
-                    <div class="meal-content">1 Fruta / Fruit / Frukt</div>
-                </div>
-                <div class="card ${completedMeals[ids.l] ? 'checked' : ''}" onclick="toggleCheck('${ids.l}', ${day})">
-                    <div class="check-circle"></div>
-                    <div class="meal-title">🍲 ${t.mealL}</div>
-                    <div class="meal-content">${m.l}</div>
-                </div>
-                <div class="card" style="border-left-color: var(--secondary);">
-                    <div class="meal-title">🍪 ${t.mealS} PM</div>
-                    <div class="meal-content">Fruta / Fruit</div>
-                </div>
-                <div class="card ${completedMeals[ids.d] ? 'checked' : ''}" style="border-left-color: var(--accent);" onclick="toggleCheck('${ids.d}', ${day})">
-                    <div class="check-circle"></div>
-                    <div class="meal-title">🌙 ${t.mealD}</div>
-                    <div class="meal-content">${m.d}</div>
-                </div>
-            `;
-            document.getElementById('menuContent').innerHTML = html;
-        }
+  <!-- Glucose sparkline -->
+  <div class="glucose-widget">
+    <div class="glucose-title" id="sparkTitle">📈 Glucosa — últimas lecturas</div>
+    <div class="sparkline-wrap" id="sparklineWrap"></div>
+  </div>
 
-        function toggleCheck(id, day) {
-            if (completedMeals[id]) {
-                delete completedMeals[id];
-            } else {
-                completedMeals[id] = true;
-            }
-            localStorage.setItem('maferCycleChecks', JSON.stringify(completedMeals));
-            showDay(day); // Re-render to show strikethrough
-            renderDays(); // Re-render scroller to update checkmarks
-        }
+  <!-- Log form -->
+  <div class="log-form">
+    <div class="form-title" id="formTitle">Nuevo Registro</div>
+    <div class="form-group">
+      <label id="lblGluc">Glucosa (mg/dL)</label>
+      <input type="number" id="inputGluc" placeholder="95" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label id="lblSymp">Síntomas</label>
+      <input type="text" id="inputSymp" placeholder="ej: fatiga leve, náuseas...">
+    </div>
+    <div class="form-group">
+      <label id="lblNote">Notas</label>
+      <textarea id="inputNote" placeholder="ej: comí tarde, entrené hoy..."></textarea>
+    </div>
+    <button class="save-btn" id="saveBtn" onclick="saveLog()">Guardar Registro</button>
+  </div>
 
-        function resetCycle() {
-            if(confirm(uiText[currentLang].alertReset)) {
-                completedMeals = {};
-                localStorage.removeItem('maferCycleChecks');
-                renderDays();
-            }
-        }
+  <div class="history-title" id="histTitle">Historial</div>
+  <div id="logHistory"></div>
+  <button class="clear-btn" id="clearBtn" onclick="clearLogs()">Borrar todo el historial</button>
+</div>
 
-        function generateRandomMeal(type) {
-            const l = randomLists[currentLang];
-            const p = l.p[Math.floor(Math.random() * l.p.length)];
-            const s = l.s[Math.floor(Math.random() * l.s.length)];
-            const v = l.v[Math.floor(Math.random() * l.v.length)];
-            const f = l.f[Math.floor(Math.random() * l.f.length)];
-            
-            let text = "";
-            if (type === 'lunch') {
-                text = `<strong>1:</strong> ${p}<br><strong>2:</strong> ${s}<br><strong>3:</strong> ${v}<br><strong>4:</strong> ${f}`;
-            } else {
-                text = `<strong>1:</strong> ${p}<br><strong>2:</strong> ${s} (small/liten)<br><strong>3:</strong> ${v}`;
-            }
-            
-            document.getElementById('randomText').innerHTML = text;
-            document.getElementById('randomResult').style.display = 'block';
-        }
 
-        function saveLog() {
-            const gluc = document.getElementById('glucose').value;
-            const symp = document.getElementById('symptoms').value;
-            const note = document.getElementById('notes').value;
-            const date = new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+<!-- ================================================
+     NAV
+     ================================================ -->
+<nav>
+  <button class="nav-btn active" id="nav-plan" onclick="switchTab('plan', this)">
+    <span class="nav-icon">📅</span>
+    <span class="nav-label" data-key="navPlan">Plan</span>
+  </button>
+  <button class="nav-btn" id="nav-ideas" onclick="switchTab('ideas', this)">
+    <span class="nav-icon">👩‍🍳</span>
+    <span class="nav-label" data-key="navIdeas">Ideas</span>
+  </button>
+  <button class="nav-btn" id="nav-health" onclick="switchTab('health', this)">
+    <span class="nav-icon">📈</span>
+    <span class="nav-label" data-key="navHealth">Salud</span>
+  </button>
+</nav>
 
-            if(!gluc && !symp && !note) return;
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
 
-            const entry = { date, gluc, symp, note };
-            let logs = JSON.parse(localStorage.getItem('maferHealthLogs') || '[]');
-            logs.unshift(entry); 
-            localStorage.setItem('maferHealthLogs', JSON.stringify(logs));
-            
-            renderLogs();
-            document.getElementById('glucose').value = '';
-            document.getElementById('symptoms').value = '';
-            document.getElementById('notes').value = '';
-            alert(uiText[currentLang].alertSaved);
-        }
 
-        function renderLogs() {
-            const logs = JSON.parse(localStorage.getItem('maferHealthLogs') || '[]');
-            const container = document.getElementById('logHistory');
-            container.innerHTML = '';
+<script>
+/* ============================================================
+   TRANSLATIONS
+   ============================================================ */
+const T = {
+  es: {
+    appTag:      "1300 kcal · Sin Gluten · Low FODMAP",
+    progressLabel: "Progreso del ciclo",
+    day:         "Día",
+    resetBtn:    "↺ Reiniciar ciclo de 10 días",
+    confirmReset:"¿Reiniciar el ciclo? Se borrarán las marcas.",
+    ideaHeading: "¿Qué comemos?",
+    ideaSub:     "Genera una combinación válida al instante",
+    btnLunch:    "Almuerzo",
+    btnDinner:   "Cena",
+    resultTitle: "Sugerencia",
+    resultNote:  "🔥 Preparación: a la plancha, horno o air fryer",
+    remTitle:    "Recordatorios",
+    rem1: "Vegetales: 2 tazas cocidos por comida principal.",
+    rem2: "Frutas: 3 raciones al día (snacks AM y PM).",
+    rem3: "Agua: 8 vasos o infusiones sin azúcar.",
+    rem4: "Sin azúcar añadida. Sin lácteos con lactosa.",
+    rem5: "Aceite de oliva: máximo 1 cdta por comida.",
+    healthHeading: "Diario de Salud",
+    healthSub:   "Registra tu glucosa, síntomas y agua",
+    waterTitle:  "💧 Agua de hoy",
+    waterOf:     "vasos",
+    sparkTitle:  "📈 Glucosa — últimas lecturas",
+    sparkEmpty:  "Aún no hay lecturas registradas",
+    formTitle:   "Nuevo Registro",
+    lblGluc:     "Glucosa (mg/dL)",
+    lblSymp:     "Síntomas",
+    lblNote:     "Notas",
+    saveBtn:     "Guardar Registro",
+    histTitle:   "Historial",
+    clearBtn:    "Borrar todo el historial",
+    confirmClear:"¿Borrar todo el historial?",
+    toastSaved:  "Registro guardado ✨",
+    toastReset:  "Ciclo reiniciado 🔄",
+    mealB:       "🍳 Desayuno",
+    mealSa:      "🍊 Merienda AM",
+    mealL:       "🍲 Almuerzo",
+    mealSp:      "🍫 Merienda PM",
+    mealD:       "🌙 Cena",
+    snackAm:     "1 fruta de temporada · bajo FODMAP",
+    snackPm:     "1 fruta de temporada · bajo FODMAP",
+    navPlan:     "Plan",
+    navIdeas:    "Ideas",
+    navHealth:   "Salud",
+    catProt:     "Proteína",
+    catCarb:     "Carbohidrato",
+    catVeg:      "Vegetal",
+    catFat:      "Grasa",
+    glucoseLabel:"Glucosa",
+    sympLabel:   "Síntomas",
+  },
+  en: {
+    appTag:      "1300 kcal · Gluten Free · Low FODMAP",
+    progressLabel: "Cycle progress",
+    day:         "Day",
+    resetBtn:    "↺ Reset 10-day cycle",
+    confirmReset:"Reset cycle? Your check marks will be cleared.",
+    ideaHeading: "What to eat?",
+    ideaSub:     "Generate a valid meal combo instantly",
+    btnLunch:    "Lunch",
+    btnDinner:   "Dinner",
+    resultTitle: "Suggestion",
+    resultNote:  "🔥 Method: grilled, baked, or air fryer only",
+    remTitle:    "Reminders",
+    rem1: "Veggies: 2 cups cooked per main meal.",
+    rem2: "Fruit: 3 servings per day (AM & PM snacks).",
+    rem3: "Water: 8 glasses or sugar-free herbal tea.",
+    rem4: "No added sugar. No lactose dairy.",
+    rem5: "Olive oil: max 1 tsp per meal.",
+    healthHeading: "Health Journal",
+    healthSub:   "Log your glucose, symptoms, and water",
+    waterTitle:  "💧 Water today",
+    waterOf:     "glasses",
+    sparkTitle:  "📈 Glucose — recent readings",
+    sparkEmpty:  "No readings logged yet",
+    formTitle:   "New Entry",
+    lblGluc:     "Glucose (mg/dL)",
+    lblSymp:     "Symptoms",
+    lblNote:     "Notes",
+    saveBtn:     "Save Entry",
+    histTitle:   "History",
+    clearBtn:    "Clear all history",
+    confirmClear:"Clear all history?",
+    toastSaved:  "Entry saved ✨",
+    toastReset:  "Cycle reset 🔄",
+    mealB:       "🍳 Breakfast",
+    mealSa:      "🍊 AM Snack",
+    mealL:       "🍲 Lunch",
+    mealSp:      "🍫 PM Snack",
+    mealD:       "🌙 Dinner",
+    snackAm:     "1 seasonal fruit · low FODMAP",
+    snackPm:     "1 seasonal fruit · low FODMAP",
+    navPlan:     "Plan",
+    navIdeas:    "Ideas",
+    navHealth:   "Health",
+    catProt:     "Protein",
+    catCarb:     "Carb",
+    catVeg:      "Veggie",
+    catFat:      "Fat",
+    glucoseLabel:"Glucose",
+    sympLabel:   "Symptoms",
+  },
+  no: {
+    appTag:      "1300 kcal · Glutenfri · Lav FODMAP",
+    progressLabel: "Syklusfremgang",
+    day:         "Dag",
+    resetBtn:    "↺ Nullstill 10-dagers syklus",
+    confirmReset:"Nullstille syklusen? Avkrysningene slettes.",
+    ideaHeading: "Hva skal vi spise?",
+    ideaSub:     "Generer en gyldig måltidskombinasjon",
+    btnLunch:    "Lunsj",
+    btnDinner:   "Middag",
+    resultTitle: "Forslag",
+    resultNote:  "🔥 Tilberedning: grillet, bakt eller air fryer",
+    remTitle:    "Påminnelser",
+    rem1: "Grønnsaker: 2 kopper kokt per hovedmåltid.",
+    rem2: "Frukt: 3 porsjoner per dag (mellommåltider).",
+    rem3: "Vann: 8 glass eller sukkerfri urtete.",
+    rem4: "Ingen tilsatt sukker. Ingen melkeprodukter med laktose.",
+    rem5: "Olivenolje: maks 1 ts per måltid.",
+    healthHeading: "Helselogg",
+    healthSub:   "Logg glukose, symptomer og vann",
+    waterTitle:  "💧 Vann i dag",
+    waterOf:     "glass",
+    sparkTitle:  "📈 Glukose — siste målinger",
+    sparkEmpty:  "Ingen målinger registrert ennå",
+    formTitle:   "Ny Oppføring",
+    lblGluc:     "Glukose (mg/dL)",
+    lblSymp:     "Symptomer",
+    lblNote:     "Notater",
+    saveBtn:     "Lagre",
+    histTitle:   "Historikk",
+    clearBtn:    "Slett all historikk",
+    confirmClear:"Slette all historikk?",
+    toastSaved:  "Lagret ✨",
+    toastReset:  "Syklus nullstilt 🔄",
+    mealB:       "🍳 Frokost",
+    mealSa:      "🍊 Mellommåltid FM",
+    mealL:       "🍲 Lunsj",
+    mealSp:      "🍫 Mellommåltid EM",
+    mealD:       "🌙 Middag",
+    snackAm:     "1 sesongfrukt · lav FODMAP",
+    snackPm:     "1 sesongfrukt · lav FODMAP",
+    navPlan:     "Plan",
+    navIdeas:    "Ideer",
+    navHealth:   "Helse",
+    catProt:     "Protein",
+    catCarb:     "Karbohydrat",
+    catVeg:      "Grønnsak",
+    catFat:      "Fett",
+    glucoseLabel:"Glukose",
+    sympLabel:   "Symptomer",
+  }
+};
 
-            logs.forEach(log => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.style.borderLeftColor = 'var(--accent)';
-                div.innerHTML = `
-                    <div class="meal-title">${log.date}</div>
-                    ${log.gluc ? `<div>🩸 ${log.gluc}</div>` : ''}
-                    ${log.symp ? `<div>⚠️ ${log.symp}</div>` : ''}
-                    ${log.note ? `<div class="note">📝 ${log.note}</div>` : ''}
-                `;
-                container.appendChild(div);
-            });
-        }
+/* ============================================================
+   MEAL PLAN DATA — 10 DAYS × 3 LANGUAGES
+   ============================================================ */
+const MENU = {
+  1: {
+    es: { b: "Queso semi duro (90g) + Arepa asada (100g) + Aguacate ½",
+          l: "Pechuga de pollo empanizada en air fryer (90g) + 2 Papas medianas + Ensalada verde",
+          d: "Hamburguesa de carne molida magra + Casabe (60g) + Tomate y lechuga" },
+    en: { b: "Semi-hard cheese (90g) + Grilled arepa (100g) + ½ Avocado",
+          l: "Air-fryer breaded chicken breast (90g) + 2 medium potatoes + Green salad",
+          d: "Lean beef burger + Cassava bread (60g) + Tomato & lettuce" },
+    no: { b: "Halvfast ost (90g) + Grillet arepa (100g) + ½ Avokado",
+          l: "Air-fryer panert kyllingbryst (90g) + 2 mellomstore poteter + Grønn salat",
+          d: "Mager hamburgerkjøtt + Kassavabrød (60g) + Tomat og salat" }
+  },
+  2: {
+    es: { b: "Jamón de pavo (3 rebanadas) + Arepa de batata + Alfalfa",
+          l: "Calabacines rellenos con carne molida (90g) + Arroz blanco (½ tz)",
+          d: "Ensalada de atún (90g) + Arepa pequeña + Cebolla verde" },
+    en: { b: "Turkey ham (3 slices) + Sweet potato arepa + Alfalfa sprouts",
+          l: "Zucchini stuffed with ground beef (90g) + White rice (½ cup)",
+          d: "Tuna salad (90g) + Small arepa + Spring onion" },
+    no: { b: "Kalkunskinke (3 skiver) + Søtpotet-arepa + Alfalfaspirer",
+          l: "Squash fylt med kjøttdeig (90g) + Hvit ris (½ kopp)",
+          d: "Tunfisksalat (90g) + Liten arepa + Vårløk" }
+  },
+  3: {
+    es: { b: "Pollo esmechado (90g) + 2 Papas rellenas + Aceite de oliva",
+          l: "Atún al ajillo (90g) + Yuca sancochada (120g) + Berros y tomate",
+          d: "Carne molida (4 cdas) + Tortilla de maíz + Guacamole casero" },
+    en: { b: "Shredded chicken (90g) + 2 stuffed potatoes + Olive oil",
+          l: "Garlic tuna (90g) + Boiled cassava (120g) + Watercress & tomato",
+          d: "Ground beef (4 tbsp) + Corn tortilla + Homemade guacamole" },
+    no: { b: "Revet kylling (90g) + 2 fylte poteter + Olivenolje",
+          l: "Hvitløkstunfisk (90g) + Kokt kassava (120g) + Brønnkarse og tomat",
+          d: "Kjøttdeig (4 ss) + Maistortilla + Hjemmelaget guacamole" }
+  },
+  4: {
+    es: { b: "Carne molida magra (90g) + Arepa con ajonjolí + Aguacate ¼",
+          l: "Arroz con pollo y vegetales salteados (90g pollo + ½ tz arroz)",
+          d: "Jamón de pavo + Queso mozzarella búfala + Tortilla de plátano" },
+    en: { b: "Lean ground beef (90g) + Sesame arepa + ¼ Avocado",
+          l: "Chicken and vegetable rice (90g chicken + ½ cup rice)",
+          d: "Turkey ham + Buffalo mozzarella + Plantain tortilla" },
+    no: { b: "Mager kjøttdeig (90g) + Sesam-arepa + ¼ Avokado",
+          l: "Ris med kylling og sauterte grønnsaker (90g kylling + ½ kopp ris)",
+          d: "Kalkunskinke + Bøffelmozzarella + Banantortilla" }
+  },
+  5: {
+    es: { b: "Ensalada de atún (6 cdas) + Casabe (60g) + Tomate cherry",
+          l: "Carne a la parrilla (90g) + Bollitos de maíz (2) + Ensalada mixta",
+          d: "Buñuelos de yuca en air fryer + Queso blanco (30g)" },
+    en: { b: "Tuna salad (6 tbsp) + Cassava bread (60g) + Cherry tomatoes",
+          l: "Grilled beef (90g) + Corn dumplings (2) + Mixed salad",
+          d: "Cassava fritters in air fryer + White cheese (30g)" },
+    no: { b: "Tunfisksalat (6 ss) + Kassavabrød (60g) + Cherrytomater",
+          l: "Grillet biff (90g) + Maisballer (2) + Blandet salat",
+          d: "Kassavaboller i air fryer + Hvit ost (30g)" }
+  },
+  6: {
+    es: { b: "Pollo esmechado (90g) + Tortilla de plátano + Margarina vegetal",
+          l: "Asado negro (90g) + Arroz blanco (1 tz) + Ensalada verde",
+          d: "Jamón de pavo + Galletas de arroz (2 paq) + Pepino y tomate" },
+    en: { b: "Shredded chicken (90g) + Plantain tortilla + Vegan margarine",
+          l: "Asado negro beef (90g) + White rice (1 cup) + Green salad",
+          d: "Turkey ham + Rice cakes (2 packs) + Cucumber & tomato" },
+    no: { b: "Revet kylling (90g) + Banantortilla + Vegansk margarin",
+          l: "Asado negro oksekjøtt (90g) + Hvit ris (1 kopp) + Grønn salat",
+          d: "Kalkunskinke + Riskaker (2 pakker) + Agurk og tomat" }
+  },
+  7: {
+    es: { b: "Pavo (90g) + Crepes de harina de arroz + Vegetales salteados",
+          l: "Pescado al horno (90g) + Casabe (60g) + Ensalada de papa",
+          d: "Queso amarillo (60g) + 1 rebanada jamón + Yuca sancochada (80g)" },
+    en: { b: "Turkey (90g) + Rice flour crepes + Sautéed vegetables",
+          l: "Baked fish (90g) + Cassava bread (60g) + Potato salad",
+          d: "Yellow cheese (60g) + 1 ham slice + Boiled cassava (80g)" },
+    no: { b: "Kalkun (90g) + Rismelspannekaker + Sauterte grønnsaker",
+          l: "Bakt fisk (90g) + Kassavabrød (60g) + Potetsalat",
+          d: "Gul ost (60g) + 1 skinkeskive + Kokt kassava (80g)" }
+  },
+  8: {
+    es: { b: "Pollo esmechado (90g) + Arepa asada + Aguacate ½",
+          l: "Pollo a la plancha (90g) + Arroz blanco + Brócoli y tomate",
+          d: "Tortilla de calabacín / 2 claras de huevo + Jamón rallado (40g)" },
+    en: { b: "Shredded chicken (90g) + Grilled arepa + ½ Avocado",
+          l: "Grilled chicken (90g) + White rice + Broccoli & tomato",
+          d: "Zucchini omelette / 2 egg whites + Grated ham (40g)" },
+    no: { b: "Revet kylling (90g) + Grillet arepa + ½ Avokado",
+          l: "Grillet kylling (90g) + Hvit ris + Brokkoli og tomat",
+          d: "Squashomelett / 2 eggehviter + Revet skinke (40g)" }
+  },
+  9: {
+    es: { b: "Plátano maduro horneado (1) + Queso búfala (60g)",
+          l: "Hamburguesa de carne (90g) + Pan sin gluten + Papa brava al horno",
+          d: "Ensalada caprese: mozzarella búfala (30g) + Tomate + Albahaca + Galleta soda SG" },
+    en: { b: "Baked ripe plantain (1) + Buffalo cheese (60g)",
+          l: "Beef burger (90g) + GF bun + Baked spicy potato",
+          d: "Caprese salad: buffalo mozzarella (30g) + Tomato + Basil + GF soda cracker" },
+    no: { b: "Bakt moden banan (1) + Bøffelost (60g)",
+          l: "Hamburger (90g) + Glutenfritt brød + Bakt krydret potet",
+          d: "Caprese-salat: bøffelmozzarella (30g) + Tomat + Basilikum + Glutenfri sodakjeks" }
+  },
+  10: {
+    es: { b: "Queso de cabra (90g) + Arepa mediana + Margarina vegetal",
+          l: "Croquetas de pescado en air fryer (90g) + Arroz blanco",
+          d: "Sopa de auyama y apio (2 tz) + Carne magra (90g)" },
+    en: { b: "Goat cheese (90g) + Medium arepa + Vegan margarine",
+          l: "Air-fryer fish croquettes (90g) + White rice",
+          d: "Pumpkin & celery soup (2 cups) + Lean beef (90g)" },
+    no: { b: "Geitost (90g) + Medium arepa + Vegansk margarin",
+          l: "Air-fryer fiskekaker (90g) + Hvit ris",
+          d: "Gresskar- og sellerisuppe (2 kopper) + Magert kjøtt (90g)" }
+  }
+};
 
-        function clearLogs() {
-            if(confirm("Delete all history?")) {
-                localStorage.removeItem('maferHealthLogs');
-                renderLogs();
-            }
-        }
+/* ============================================================
+   RANDOM MEAL COMBOS
+   ============================================================ */
+const COMBOS = {
+  es: {
+    prot: ["Pollo a la plancha","Carne magra asada","Pescado al horno","Atún al natural","Pavo horneado","Huevos (2)","Croquetas de pescado AF"],
+    carb: ["Arroz blanco (½ tz)","Yuca sancochada","Batata horneada","Arepa mediana","Plátano verde","Casabe (60g)","Papa al horno (1)"],
+    veg:  ["Calabacín salteado","Brócoli al vapor","Vainitas","Zanahoria asada","Espinacas","Berenjena a la plancha","Pimentón asado"],
+    fat:  ["Aguacate (¼)","Aceite de oliva (1 cdta)","Aceitunas (5)"]
+  },
+  en: {
+    prot: ["Grilled chicken","Lean roast beef","Baked fish","Canned tuna","Baked turkey","Eggs (2)","AF fish croquettes"],
+    carb: ["White rice (½ cup)","Boiled cassava","Baked sweet potato","Medium arepa","Green plantain","Cassava bread (60g)","Baked potato (1)"],
+    veg:  ["Sautéed zucchini","Steamed broccoli","Green beans","Roasted carrot","Spinach","Grilled eggplant","Roasted peppers"],
+    fat:  ["Avocado (¼)","Olive oil (1 tsp)","Olives (5)"]
+  },
+  no: {
+    prot: ["Grillet kylling","Magert stekt kjøtt","Bakt fisk","Hermetisk tunfisk","Bakt kalkun","Egg (2)","Luftfritert fiskekaker"],
+    carb: ["Hvit ris (½ kopp)","Kokt kassava","Bakt søtpotet","Medium arepa","Grønn banan","Kassavabrød (60g)","Bakt potet (1)"],
+    veg:  ["Sautert squash","Dampet brokkoli","Grønne bønner","Stekt gulrot","Spinat","Grillet aubergine","Stekt paprika"],
+    fat:  ["Avokado (¼)","Olivenolje (1 ts)","Oliven (5)"]
+  }
+};
 
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
+/* ============================================================
+   APP STATE
+   ============================================================ */
+let lang        = localStorage.getItem('mafer_lang') || 'es';
+let activeDay   = 1;  // BUGFIX: stored in JS, never read from DOM
+let mealChecks  = JSON.parse(localStorage.getItem('mafer_checks') || '{}');
+let waterData   = JSON.parse(localStorage.getItem('mafer_water')  || '{"date":"","count":0}');
+let healthLogs  = JSON.parse(localStorage.getItem('mafer_logs')   || '[]');
 
-        // Init
-        setLang('es');
-        renderLogs();
+const TOTAL_CHECKABLE = 50; // 10 days × 5 meals (b, sa, l, sp, d)
 
-    </script>
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+  applyLang();
+  renderDayScroller();
+  renderPlan();
+  checkWaterReset();
+  renderWater();
+  renderSparkline();
+  renderLogs();
+  updateProgress();
+}
+
+/* ============================================================
+   LANGUAGE
+   ============================================================ */
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('mafer_lang', l);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  applyLang();
+  renderDayScroller();
+  renderPlan();
+}
+
+function t(key) { return T[lang][key] || T['es'][key] || ''; }
+
+function applyLang() {
+  // header
+  document.getElementById('appTag').textContent        = t('appTag');
+  document.getElementById('progressLabel').textContent = t('progressLabel');
+  document.getElementById('resetBtn').textContent      = t('resetBtn');
+  // ideas
+  document.getElementById('ideaHeading').textContent   = t('ideaHeading');
+  document.getElementById('ideaSub').textContent       = t('ideaSub');
+  document.getElementById('btnLunch').textContent      = t('btnLunch');
+  document.getElementById('btnDinner').textContent     = t('btnDinner');
+  document.getElementById('resultTitle').textContent   = t('resultTitle');
+  document.getElementById('resultNote').textContent    = t('resultNote');
+  document.getElementById('remTitle').textContent      = t('remTitle');
+  document.getElementById('rem1').textContent          = t('rem1');
+  document.getElementById('rem2').textContent          = t('rem2');
+  document.getElementById('rem3').textContent          = t('rem3');
+  document.getElementById('rem4').textContent          = t('rem4');
+  document.getElementById('rem5').textContent          = t('rem5');
+  // health
+  document.getElementById('healthHeading').textContent = t('healthHeading');
+  document.getElementById('healthSub').textContent     = t('healthSub');
+  document.getElementById('waterTitle').textContent    = t('waterTitle');
+  document.getElementById('sparkTitle').textContent    = t('sparkTitle');
+  document.getElementById('formTitle').textContent     = t('formTitle');
+  document.getElementById('lblGluc').textContent       = t('lblGluc');
+  document.getElementById('lblSymp').textContent       = t('lblSymp');
+  document.getElementById('lblNote').textContent       = t('lblNote');
+  document.getElementById('saveBtn').textContent       = t('saveBtn');
+  document.getElementById('histTitle').textContent     = t('histTitle');
+  document.getElementById('clearBtn').textContent      = t('clearBtn');
+  // nav
+  document.querySelectorAll('.nav-label').forEach(el => {
+    el.textContent = t(el.dataset.key);
+  });
+  // water count label
+  renderWaterCount();
+}
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+function updateProgress() {
+  const checked = Object.keys(mealChecks).length;
+  const pct = Math.round((checked / TOTAL_CHECKABLE) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent  = pct + '%';
+}
+
+/* ============================================================
+   DAY SCROLLER
+   ============================================================ */
+function renderDayScroller() {
+  const scroller = document.getElementById('dayScroller');
+  scroller.innerHTML = '';
+  for (let d = 1; d <= 10; d++) {
+    const btn = document.createElement('button');
+    btn.className = 'day-btn' +
+      (d === activeDay ? ' active' : '') +
+      (isDayDone(d)    ? ' done'   : '');
+    btn.textContent = t('day') + ' ' + d;
+    btn.onclick = () => goToDay(d);
+    scroller.appendChild(btn);
+  }
+}
+
+function goToDay(d) {
+  activeDay = d;
+  renderDayScroller();
+  renderPlan();
+}
+
+function isDayDone(d) {
+  return ['b','sa','l','sp','d'].every(m => mealChecks[`d${d}_${m}`]);
+}
+
+/* ============================================================
+   PLAN RENDERER
+   ============================================================ */
+function renderPlan() {
+  const d   = activeDay;
+  const m   = MENU[d][lang];
+
+  const meals = [
+    { key: `d${d}_b`,  label: t('mealB'),  body: m.b,          checkable: true,  cls: 'meal-b'  },
+    { key: `d${d}_sa`, label: t('mealSa'), body: t('snackAm'), checkable: true,  cls: 'meal-sa' },
+    { key: `d${d}_l`,  label: t('mealL'),  body: m.l,          checkable: true,  cls: 'meal-l'  },
+    { key: `d${d}_sp`, label: t('mealSp'), body: t('snackPm'), checkable: true,  cls: 'meal-sp' },
+    { key: `d${d}_d`,  label: t('mealD'),  body: m.d,          checkable: true,  cls: 'meal-d'  },
+  ];
+
+  document.getElementById('planContent').innerHTML = meals.map(meal => {
+    const done = !!mealChecks[meal.key];
+    return `
+      <div class="card ${meal.cls}${done ? ' checked' : ''}" id="card-${meal.key}">
+        <div class="meal-title">${meal.label}</div>
+        <div class="meal-body">${meal.body}</div>
+        <button class="check-btn" onclick="toggleMeal('${meal.key}', ${d})" aria-label="Marcar como completado"></button>
+      </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   MEAL TOGGLE
+   ============================================================ */
+function toggleMeal(key, day) {
+  if (mealChecks[key]) {
+    delete mealChecks[key];
+  } else {
+    mealChecks[key] = true;
+  }
+  localStorage.setItem('mafer_checks', JSON.stringify(mealChecks));
+  // Update only the tapped card for snappy UX
+  const card = document.getElementById('card-' + key);
+  if (card) {
+    card.classList.toggle('checked', !!mealChecks[key]);
+  }
+  // Refresh scroller badge + progress
+  renderDayScroller();
+  updateProgress();
+}
+
+/* ============================================================
+   RESET CYCLE
+   ============================================================ */
+function resetCycle() {
+  if (!confirm(t('confirmReset'))) return;
+  mealChecks = {};
+  localStorage.removeItem('mafer_checks');
+  activeDay = 1;
+  renderDayScroller();
+  renderPlan();
+  updateProgress();
+  showToast(t('toastReset'));
+}
+
+/* ============================================================
+   RANDOM MEAL GENERATOR
+   ============================================================ */
+function generateMeal(type) {
+  const c    = COMBOS[lang];
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const prot = pick(c.prot);
+  const carb = pick(c.carb);
+  const veg  = pick(c.veg);
+  const fat  = pick(c.fat);
+
+  const rows = type === 'lunch'
+    ? [{cat: t('catProt'), val: prot}, {cat: t('catCarb'), val: carb}, {cat: t('catVeg'), val: veg}, {cat: t('catFat'), val: fat}]
+    : [{cat: t('catProt'), val: prot}, {cat: t('catCarb'), val: carb}, {cat: t('catVeg'), val: veg}];
+
+  document.getElementById('resultRows').innerHTML = rows.map(r =>
+    `<div class="result-row"><span class="cat">${r.cat}</span><span>${r.val}</span></div>`
+  ).join('');
+
+  const card = document.getElementById('resultCard');
+  card.classList.add('visible');
+}
+
+/* ============================================================
+   WATER TRACKER
+   ============================================================ */
+function checkWaterReset() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (waterData.date !== today) {
+    waterData = { date: today, count: 0 };
+    localStorage.setItem('mafer_water', JSON.stringify(waterData));
+  }
+}
+
+function renderWater() {
+  const wrap = document.getElementById('waterGlasses');
+  wrap.innerHTML = '';
+  for (let i = 1; i <= 8; i++) {
+    const btn = document.createElement('button');
+    btn.className   = 'glass-btn ' + (i <= waterData.count ? 'filled' : 'empty');
+    btn.innerHTML   = `<span class="glass-icon">💧</span>`;
+    btn.onclick     = () => setWater(i);
+    btn.setAttribute('aria-label', `Glass ${i}`);
+    wrap.appendChild(btn);
+  }
+  renderWaterCount();
+}
+
+function renderWaterCount() {
+  document.getElementById('waterCount').textContent =
+    `${waterData.count} / 8 ${t('waterOf')}`;
+}
+
+function setWater(n) {
+  // Toggle: click filled = unfill from that glass
+  waterData.count = (waterData.count === n) ? n - 1 : n;
+  localStorage.setItem('mafer_water', JSON.stringify(waterData));
+  renderWater();
+}
+
+/* ============================================================
+   GLUCOSE SPARKLINE
+   ============================================================ */
+function renderSparkline() {
+  const wrap = document.getElementById('sparklineWrap');
+  const glucoseEntries = healthLogs
+    .filter(l => l.gluc && !isNaN(parseFloat(l.gluc)))
+    .slice(0, 7)
+    .reverse();
+
+  if (glucoseEntries.length < 2) {
+    wrap.innerHTML = `<div class="sparkline-empty">${t('sparkEmpty')}</div>`;
+    return;
+  }
+
+  const vals  = glucoseEntries.map(l => parseFloat(l.gluc));
+  const minV  = Math.min(...vals);
+  const maxV  = Math.max(...vals);
+  const range = maxV - minV || 10;
+  const W     = 320;
+  const H     = 52;
+  const pad   = 10;
+
+  const pts = vals.map((v, i) => {
+    const x = pad + (i / (vals.length - 1)) * (W - pad * 2);
+    const y = H - pad - ((v - minV) / range) * (H - pad * 2);
+    return `${x},${y}`;
+  });
+
+  const normal = { min: 70, max: 140 };
+
+  wrap.innerHTML = `
+    <svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+      <polyline fill="none" stroke="#74C69D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts.join(' ')}"/>
+      ${vals.map((v, i) => {
+        const [x, y] = pts[i].split(',');
+        const color  = v < normal.min || v > normal.max ? '#E07A5F' : '#2D6A4F';
+        return `<circle cx="${x}" cy="${y}" r="3.5" fill="${color}" stroke="white" stroke-width="1.5"/>
+                <text x="${x}" y="${parseFloat(y) - 7}" text-anchor="middle" font-size="9" fill="${color}" font-weight="700" font-family="Nunito,sans-serif">${Math.round(v)}</text>`;
+      }).join('')}
+    </svg>`;
+}
+
+/* ============================================================
+   HEALTH LOG
+   ============================================================ */
+function saveLog() {
+  const gluc = document.getElementById('inputGluc').value.trim();
+  const symp = document.getElementById('inputSymp').value.trim();
+  const note = document.getElementById('inputNote').value.trim();
+
+  if (!gluc && !symp && !note) return;
+
+  const now    = new Date();
+  const entry  = {
+    date: now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    gluc, symp, note
+  };
+
+  healthLogs.unshift(entry);
+  localStorage.setItem('mafer_logs', JSON.stringify(healthLogs));
+
+  document.getElementById('inputGluc').value = '';
+  document.getElementById('inputSymp').value = '';
+  document.getElementById('inputNote').value = '';
+
+  renderLogs();
+  renderSparkline();
+  showToast(t('toastSaved'));
+}
+
+function renderLogs() {
+  const container = document.getElementById('logHistory');
+  if (!healthLogs.length) {
+    container.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:0.85rem;font-weight:600;padding:20px 0;">&mdash;</div>`;
+    return;
+  }
+  container.innerHTML = healthLogs.map(log => `
+    <div class="log-entry">
+      <div class="log-date">${log.date}</div>
+      ${log.gluc ? `<div class="log-row">🩸 ${t('glucoseLabel')}: <strong>${log.gluc} mg/dL</strong></div>` : ''}
+      ${log.symp ? `<div class="log-row">⚠️ ${t('sympLabel')}: ${log.symp}</div>` : ''}
+      ${log.note ? `<div class="log-note">📝 ${log.note}</div>` : ''}
+    </div>`).join('');
+}
+
+function clearLogs() {
+  if (!confirm(t('confirmClear'))) return;
+  healthLogs = [];
+  localStorage.removeItem('mafer_logs');
+  renderLogs();
+  renderSparkline();
+}
+
+/* ============================================================
+   TAB SWITCHER
+   ============================================================ */
+function switchTab(tab, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + tab).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+// Restore lang button state from saved preference
+document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+const savedLangBtn = document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`);
+if (savedLangBtn) savedLangBtn.classList.add('active');
+
+init();
+</script>
 </body>
 </html>

@@ -884,7 +884,7 @@ const T = {
     rem2: "Frutas: 3 raciones al día (snacks AM y PM).",
     rem3: "Agua: 8 vasos o infusiones sin azúcar.",
     rem4: "Sin azúcar añadida. Sin lácteos con lactosa.",
-    rem5: "Aceite de oliva: máximo 1 cdta por comida.",
+    rem5: "Endulzante permitido: Monk Fruit o Stevia (NO azúcar, xilitol o manitol).",
     healthHeading: "Diario de Salud",
     healthSub:   "Registra tu glucosa, síntomas y agua",
     waterTitle:  "💧 Agua de hoy",
@@ -907,7 +907,7 @@ const T = {
     mealSp:      "🍫 Merienda PM",
     mealD:       "🌙 Cena",
     snackAm:     "1 fruta de temporada · bajo FODMAP",
-    snackPm:     "1 fruta de temporada · bajo FODMAP",
+    snackPm:     "1 fruta de la lista + 1 galleta de arroz o maíz SG",
     navPlan:     "Plan",
     navIdeas:    "Ideas",
     navHealth:   "Salud",
@@ -935,7 +935,7 @@ const T = {
     rem2: "Fruit: 3 servings per day (AM & PM snacks).",
     rem3: "Water: 8 glasses or sugar-free herbal tea.",
     rem4: "No added sugar. No lactose dairy.",
-    rem5: "Olive oil: max 1 tsp per meal.",
+    rem5: "Sweetener allowed: Monk Fruit or Stevia only (NO sugar, xylitol or mannitol).",
     healthHeading: "Health Journal",
     healthSub:   "Log your glucose, symptoms, and water",
     waterTitle:  "💧 Water today",
@@ -958,7 +958,7 @@ const T = {
     mealSp:      "🍫 PM Snack",
     mealD:       "🌙 Dinner",
     snackAm:     "1 seasonal fruit · low FODMAP",
-    snackPm:     "1 seasonal fruit · low FODMAP",
+    snackPm:     "1 fruit from list + 1 GF rice or corn cracker",
     navPlan:     "Plan",
     navIdeas:    "Ideas",
     navHealth:   "Health",
@@ -986,7 +986,7 @@ const T = {
     rem2: "Frukt: 3 porsjoner per dag (mellommåltider).",
     rem3: "Vann: 8 glass eller sukkerfri urtete.",
     rem4: "Ingen tilsatt sukker. Ingen melkeprodukter med laktose.",
-    rem5: "Olivenolje: maks 1 ts per måltid.",
+    rem5: "Tillatt søtningsmiddel: Monk Fruit eller Stevia (IKKE sukker, xylitol eller mannitol).",
     healthHeading: "Helselogg",
     healthSub:   "Logg glukose, symptomer og vann",
     waterTitle:  "💧 Vann i dag",
@@ -1009,7 +1009,7 @@ const T = {
     mealSp:      "🍫 Mellommåltid EM",
     mealD:       "🌙 Middag",
     snackAm:     "1 sesongfrukt · lav FODMAP",
-    snackPm:     "1 sesongfrukt · lav FODMAP",
+    snackPm:     "1 frukt fra listen + 1 glutenfri riskjeks eller maiskjeks",
     navPlan:     "Plan",
     navIdeas:    "Ideer",
     navHealth:   "Helse",
@@ -1024,141 +1024,145 @@ const T = {
 
 /* ============================================================
    MEAL PLAN DATA — 10 DAYS × 3 LANGUAGES
+   Source: Lic. Ana K. Rodríguez — Plan Nutricional María F. Córdova
+   Typos corrected: "almuerzo" labels in doc rows 6-10 of desayuno
+   and cena sections were mislabeled — corrected to proper meal type.
    ============================================================ */
 const MENU = {
   1: {
-    es: { b: "Queso semi duro (90g) + Arepa asada (100g) + Aguacate ½",
-          l: "Pechuga de pollo empanizada en air fryer (90g) + 2 Papas medianas + Ensalada verde",
-          d: "Hamburguesa de carne molida magra + Casabe (60g) + Tomate y lechuga" },
-    en: { b: "Semi-hard cheese (90g) + Grilled arepa (100g) + ½ Avocado",
-          l: "Air-fryer breaded chicken breast (90g) + 2 medium potatoes + Green salad",
-          d: "Lean beef burger + Cassava bread (60g) + Tomato & lettuce" },
-    no: { b: "Halvfast ost (90g) + Grillet arepa (100g) + ½ Avokado",
-          l: "Air-fryer panert kyllingbryst (90g) + 2 mellomstore poteter + Grønn salat",
-          d: "Mager hamburgerkjøtt + Kassavabrød (60g) + Tomat og salat" }
+    es: { b: "Queso semi duro (90g) + Arepa asada (100g) + Aguacate, 1 trozo",
+          l: "Pechuga empanizada en air fryer (90g) + 2 papas medianas + Ensalada rallada con 1 cdta mayonesa",
+          d: "Hamburguesa de carne molida + Casabe + Tomate, lechuga, pepino y mostaza" },
+    en: { b: "Semi-hard cheese (90g) + Grilled arepa (100g) + Avocado, 1 slice",
+          l: "Air-fryer breaded chicken breast (90g) + 2 medium potatoes + Shredded salad with 1 tsp mayo",
+          d: "Ground beef burger + Cassava bread + Tomato, lettuce, cucumber & mustard" },
+    no: { b: "Halvfast ost (90g) + Grillet arepa (100g) + Avokado, 1 skive",
+          l: "Air-fryer panert kyllingbryst (90g) + 2 mellomstore poteter + Revet salat med 1 ts majones",
+          d: "Kjøttdeigburger + Kassavabrød + Tomat, salat, agurk og sennep" }
   },
   2: {
-    es: { b: "Jamón de pavo (3 rebanadas) + Arepa de batata + Alfalfa",
+    es: { b: "Jamón de pavo (3 rebanadas) + Arepa de batata (1) + Alfalfa, tomate y margarina vegetal (1 cdta)",
           l: "Calabacines rellenos con carne molida (90g) + Arroz blanco (½ tz)",
-          d: "Ensalada de atún (90g) + Arepa pequeña + Cebolla verde" },
-    en: { b: "Turkey ham (3 slices) + Sweet potato arepa + Alfalfa sprouts",
+          d: "Ensalada de atún (90g) + Arepa pequeña + Cebolla y tomate" },
+    en: { b: "Turkey ham (3 slices) + Sweet potato arepa (1) + Alfalfa, tomato & vegan margarine (1 tsp)",
           l: "Zucchini stuffed with ground beef (90g) + White rice (½ cup)",
-          d: "Tuna salad (90g) + Small arepa + Spring onion" },
-    no: { b: "Kalkunskinke (3 skiver) + Søtpotet-arepa + Alfalfaspirer",
+          d: "Tuna salad (90g) + Small arepa + Onion & tomato" },
+    no: { b: "Kalkunskinke (3 skiver) + Søtpotet-arepa (1) + Alfalfa, tomat og vegansk margarin (1 ts)",
           l: "Squash fylt med kjøttdeig (90g) + Hvit ris (½ kopp)",
-          d: "Tunfisksalat (90g) + Liten arepa + Vårløk" }
+          d: "Tunfisksalat (90g) + Liten arepa + Løk og tomat" }
   },
   3: {
-    es: { b: "Pollo esmechado (90g) + 2 Papas rellenas + Aceite de oliva",
-          l: "Atún al ajillo (90g) + Yuca sancochada (120g) + Berros y tomate",
-          d: "Carne molida (4 cdas) + Tortilla de maíz + Guacamole casero" },
-    en: { b: "Shredded chicken (90g) + 2 stuffed potatoes + Olive oil",
-          l: "Garlic tuna (90g) + Boiled cassava (120g) + Watercress & tomato",
-          d: "Ground beef (4 tbsp) + Corn tortilla + Homemade guacamole" },
-    no: { b: "Revet kylling (90g) + 2 fylte poteter + Olivenolje",
-          l: "Hvitløkstunfisk (90g) + Kokt kassava (120g) + Brønnkarse og tomat",
-          d: "Kjøttdeig (4 ss) + Maistortilla + Hjemmelaget guacamole" }
+    es: { b: "Pollo en salsa (90g) + 2 Papas rellenas (100g) + Aceite de oliva (1 cdta)",
+          l: "Atún al ajillo (90g) + Yuca sancochada + Ensalada de berros",
+          d: "Carne molida (4 cdas) + Tortilla de maíz (burrito) + Guacamole (2 cdas)" },
+    en: { b: "Chicken in sauce (90g) + 2 stuffed potatoes (100g) + Olive oil (1 tsp)",
+          l: "Garlic tuna (90g) + Boiled cassava + Watercress salad",
+          d: "Ground beef (4 tbsp) + Corn tortilla (burrito style) + Guacamole (2 tbsp)" },
+    no: { b: "Kylling i saus (90g) + 2 fylte poteter (100g) + Olivenolje (1 ts)",
+          l: "Hvitløkstunfisk (90g) + Kokt kassava + Brønnkarsesalat",
+          d: "Kjøttdeig (4 ss) + Maistortilla (burrito) + Guacamole (2 ss)" }
   },
   4: {
-    es: { b: "Carne molida magra (90g) + Arepa con ajonjolí + Aguacate ¼",
-          l: "Arroz con pollo y vegetales salteados (90g pollo + ½ tz arroz)",
-          d: "Jamón de pavo + Queso mozzarella búfala + Tortilla de plátano" },
-    en: { b: "Lean ground beef (90g) + Sesame arepa + ¼ Avocado",
-          l: "Chicken and vegetable rice (90g chicken + ½ cup rice)",
-          d: "Turkey ham + Buffalo mozzarella + Plantain tortilla" },
-    no: { b: "Mager kjøttdeig (90g) + Sesam-arepa + ¼ Avokado",
-          l: "Ris med kylling og sauterte grønnsaker (90g kylling + ½ kopp ris)",
-          d: "Kalkunskinke + Bøffelmozzarella + Banantortilla" }
+    es: { b: "Carne molida magra (90g) + Arepa con ajonjolí",
+          l: "Arroz con pollo y vegetales salteados (90g pollo + ½ tz arroz) + Ensalada",
+          d: "Jamón y queso mozzarella de búfala (3 rebanadas) + Tortilla de plátano + Vegetales" },
+    en: { b: "Lean ground beef (90g) + Sesame-topped arepa",
+          l: "Chicken & vegetable rice (90g chicken + ½ cup rice) + Salad",
+          d: "Ham & buffalo mozzarella (3 slices) + Plantain tortilla + Vegetables" },
+    no: { b: "Mager kjøttdeig (90g) + Arepa med sesamfrø",
+          l: "Ris med kylling og grønnsaker (90g kylling + ½ kopp ris) + Salat",
+          d: "Skinke og bøffelmozzarella (3 skiver) + Banantortilla + Grønnsaker" }
   },
   5: {
-    es: { b: "Ensalada de atún (6 cdas) + Casabe (60g) + Tomate cherry",
-          l: "Carne a la parrilla (90g) + Bollitos de maíz (2) + Ensalada mixta",
-          d: "Buñuelos de yuca en air fryer + Queso blanco (30g)" },
-    en: { b: "Tuna salad (6 tbsp) + Cassava bread (60g) + Cherry tomatoes",
-          l: "Grilled beef (90g) + Corn dumplings (2) + Mixed salad",
-          d: "Cassava fritters in air fryer + White cheese (30g)" },
-    no: { b: "Tunfisksalat (6 ss) + Kassavabrød (60g) + Cherrytomater",
-          l: "Grillet biff (90g) + Maisballer (2) + Blandet salat",
-          d: "Kassavaboller i air fryer + Hvit ost (30g)" }
+    es: { b: "Ensalada de atún (6 cdas / 90g) + Casabe (60g) + Aguacate (1 trozo)",
+          l: "Parrilla de carne con cebolla y pimentón + Bollitos de maíz + Ensalada mixta",
+          d: "Buñuelos de yuca en air fryer · Cena ligera según plan" },
+    en: { b: "Tuna salad (6 tbsp / 90g) + Cassava bread (60g) + Avocado (1 slice)",
+          l: "Grilled beef with onion & peppers + Corn dumplings + Mixed salad",
+          d: "Yuca fritters in air fryer · Light dinner per plan" },
+    no: { b: "Tunfisksalat (6 ss / 90g) + Kassavabrød (60g) + Avokado (1 skive)",
+          l: "Grillet biff med løk og paprika + Maisballer + Blandet salat",
+          d: "Kassavaboller i air fryer · Lett middag per plan" }
   },
   6: {
-    es: { b: "Pollo esmechado (90g) + Tortilla de plátano + Margarina vegetal",
-          l: "Asado negro (90g) + Arroz blanco (1 tz) + Ensalada verde",
-          d: "Jamón de pavo + Galletas de arroz (2 paq) + Pepino y tomate" },
-    en: { b: "Shredded chicken (90g) + Plantain tortilla + Vegan margarine",
-          l: "Asado negro beef (90g) + White rice (1 cup) + Green salad",
-          d: "Turkey ham + Rice cakes (2 packs) + Cucumber & tomato" },
-    no: { b: "Revet kylling (90g) + Banantortilla + Vegansk margarin",
-          l: "Asado negro oksekjøtt (90g) + Hvit ris (1 kopp) + Grønn salat",
-          d: "Kalkunskinke + Riskaker (2 pakker) + Agurk og tomat" }
+    es: { b: "Pollo esmechado (90g) + Tortillas de plátano verde o maduro + Margarina vegetal o aguacate (1 cdta)",
+          l: "Asado negro (90g) + Arroz blanco (1 tz) + Ensalada de tomate y pepino",
+          d: "Jamón de pavo + Galletas de arroz (2 paq) + Ensalada de tu preferencia" },
+    en: { b: "Shredded chicken (90g) + Green or ripe plantain tortilla + Vegan margarine or avocado (1 tsp)",
+          l: "Asado negro beef (90g) + White rice (1 cup) + Tomato & cucumber salad",
+          d: "Turkey ham + Rice crackers (2 packs) + Salad of your choice" },
+    no: { b: "Revet kylling (90g) + Grønn eller moden banantortilla + Vegansk margarin eller avokado (1 ts)",
+          l: "Asado negro oksekjøtt (90g) + Hvit ris (1 kopp) + Tomat- og agurkesalat",
+          d: "Kalkunskinke + Riskaker (2 pakker) + Salat etter eget valg" }
   },
   7: {
-    es: { b: "Pavo (90g) + Crepes de harina de arroz + Vegetales salteados",
-          l: "Pescado al horno (90g) + Casabe (60g) + Ensalada de papa",
-          d: "Queso amarillo (60g) + 1 rebanada jamón + Yuca sancochada (80g)" },
-    en: { b: "Turkey (90g) + Rice flour crepes + Sautéed vegetables",
-          l: "Baked fish (90g) + Cassava bread (60g) + Potato salad",
-          d: "Yellow cheese (60g) + 1 ham slice + Boiled cassava (80g)" },
-    no: { b: "Kalkun (90g) + Rismelspannekaker + Sauterte grønnsaker",
-          l: "Bakt fisk (90g) + Kassavabrød (60g) + Potetsalat",
-          d: "Gul ost (60g) + 1 skinkeskive + Kokt kassava (80g)" }
+    es: { b: "Pavo (90g) + Crepes de harina de arroz (2 und) + Margarina vegetal + Vegetales",
+          l: "Pescado al horno (90g) + Casabe (40g) + Ensalada de papa y zanahoria",
+          d: "Queso amarillo + 1 rebanada de jamón + Yuca sancochada + Alfalfa" },
+    en: { b: "Turkey (90g) + Rice flour crepes (2) + Vegan margarine + Vegetables",
+          l: "Baked fish (90g) + Cassava bread (40g) + Potato & carrot salad",
+          d: "Yellow cheese + 1 ham slice + Boiled cassava + Alfalfa" },
+    no: { b: "Kalkun (90g) + Rismelspannekaker (2 stk) + Vegansk margarin + Grønnsaker",
+          l: "Bakt fisk (90g) + Kassavabrød (40g) + Potet- og gulrotsalat",
+          d: "Gul ost + 1 skinkeskive + Kokt kassava + Alfalfa" }
   },
   8: {
-    es: { b: "Pollo esmechado (90g) + Arepa asada + Aguacate ½",
-          l: "Pollo a la plancha (90g) + Arroz blanco + Brócoli y tomate",
-          d: "Tortilla de calabacín / 2 claras de huevo + Jamón rallado (40g)" },
-    en: { b: "Shredded chicken (90g) + Grilled arepa + ½ Avocado",
-          l: "Grilled chicken (90g) + White rice + Broccoli & tomato",
-          d: "Zucchini omelette / 2 egg whites + Grated ham (40g)" },
-    no: { b: "Revet kylling (90g) + Grillet arepa + ½ Avokado",
-          l: "Grillet kylling (90g) + Hvit ris + Brokkoli og tomat",
-          d: "Squashomelett / 2 eggehviter + Revet skinke (40g)" }
+    es: { b: "Pollo esmechado (90g / 6 cdas) + Arepa asada (100g) + Aguacate",
+          l: "Pollo a la plancha (90g) + Arroz blanco (1½ tz) + Brócoli con tomate",
+          d: "Tortilla de calabacín / 2 claras de huevo + Jamón rallado" },
+    en: { b: "Shredded chicken (90g / 6 tbsp) + Grilled arepa (100g) + Avocado",
+          l: "Grilled chicken (90g) + White rice (1½ cups) + Broccoli with tomato",
+          d: "Zucchini omelette / 2 egg whites + Grated ham" },
+    no: { b: "Revet kylling (90g / 6 ss) + Grillet arepa (100g) + Avokado",
+          l: "Grillet kylling (90g) + Hvit ris (1½ kopper) + Brokkoli med tomat",
+          d: "Squashomelett / 2 eggehviter + Revet skinke" }
   },
   9: {
-    es: { b: "Plátano maduro horneado (1) + Queso búfala (60g)",
-          l: "Hamburguesa de carne (90g) + Pan sin gluten + Papa brava al horno",
-          d: "Ensalada caprese: mozzarella búfala (30g) + Tomate + Albahaca + Galleta soda SG" },
-    en: { b: "Baked ripe plantain (1) + Buffalo cheese (60g)",
-          l: "Beef burger (90g) + GF bun + Baked spicy potato",
-          d: "Caprese salad: buffalo mozzarella (30g) + Tomato + Basil + GF soda cracker" },
-    no: { b: "Bakt moden banan (1) + Bøffelost (60g)",
-          l: "Hamburger (90g) + Glutenfritt brød + Bakt krydret potet",
-          d: "Caprese-salat: bøffelmozzarella (30g) + Tomat + Basilikum + Glutenfri sodakjeks" }
+    es: { b: "Plátano maduro horneado o en air fryer + Queso mozzarella de búfala o de cabra",
+          l: "Hamburguesa de carne (90g) + Pan sin gluten + 1 Papa brava al horno",
+          d: "Ensalada caprese: mozzarella de búfala o cabra (30g) + Tomate + Galleta de soda SG (2 paq)" },
+    en: { b: "Baked or air-fryer ripe plantain + Buffalo or goat mozzarella cheese",
+          l: "Beef burger (90g) + GF hamburger bun + 1 baked spicy potato",
+          d: "Caprese salad: buffalo or goat mozzarella (30g) + Tomato + GF soda crackers (2 packs)" },
+    no: { b: "Bakt eller air-fryer moden banan + Bøffel- eller geitmozzarella",
+          l: "Hamburgerkjøtt (90g) + Glutenfritt hamburgerbrød + 1 bakt krydret potet",
+          d: "Caprese-salat: bøffel- eller geitmozzarella (30g) + Tomat + Glutenfrie sodakjeks (2 pakker)" }
   },
   10: {
-    es: { b: "Queso de cabra (90g) + Arepa mediana + Margarina vegetal",
-          l: "Croquetas de pescado en air fryer (90g) + Arroz blanco",
-          d: "Sopa de auyama y apio (2 tz) + Carne magra (90g)" },
-    en: { b: "Goat cheese (90g) + Medium arepa + Vegan margarine",
-          l: "Air-fryer fish croquettes (90g) + White rice",
-          d: "Pumpkin & celery soup (2 cups) + Lean beef (90g)" },
-    no: { b: "Geitost (90g) + Medium arepa + Vegansk margarin",
-          l: "Air-fryer fiskekaker (90g) + Hvit ris",
-          d: "Gresskar- og sellerisuppe (2 kopper) + Magert kjøtt (90g)" }
+    es: { b: "Queso de cabra (90g) + Arepa mediana (100g) + Margarina vegetal (1 cdta)",
+          l: "Croquetas de pescado en air fryer (90g) + Arroz blanco (1 tz) + Vegetales",
+          d: "Sopa combinada de auyama, apio y carne magra (90g)" },
+    en: { b: "Goat cheese (90g) + Medium arepa (100g) + Vegan margarine (1 tsp)",
+          l: "Air-fryer fish croquettes (90g) + White rice (1 cup) + Vegetables",
+          d: "Combined pumpkin, celery & lean beef soup (90g)" },
+    no: { b: "Geitost (90g) + Medium arepa (100g) + Vegansk margarin (1 ts)",
+          l: "Air-fryer fiskekaker (90g) + Hvit ris (1 kopp) + Grønnsaker",
+          d: "Kombinert gresskar-, selleri- og magert kjøttsuppe (90g)" }
   }
 };
 
 /* ============================================================
-   RANDOM MEAL COMBOS
+   RANDOM MEAL COMBOS — based on food lists from nutritionist plan
+   All items are gluten-free, low-FODMAP, lactose-free, no added sugar
    ============================================================ */
 const COMBOS = {
   es: {
-    prot: ["Pollo a la plancha","Carne magra asada","Pescado al horno","Atún al natural","Pavo horneado","Huevos (2)","Croquetas de pescado AF"],
-    carb: ["Arroz blanco (½ tz)","Yuca sancochada","Batata horneada","Arepa mediana","Plátano verde","Casabe (60g)","Papa al horno (1)"],
-    veg:  ["Calabacín salteado","Brócoli al vapor","Vainitas","Zanahoria asada","Espinacas","Berenjena a la plancha","Pimentón asado"],
-    fat:  ["Aguacate (¼)","Aceite de oliva (1 cdta)","Aceitunas (5)"]
+    prot: ["Pollo a la plancha (90g)","Carne magra asada (90g)","Pescado al horno (90g)","Atún al natural (90g)","Pavo al horno (90g)","2 claras de huevo","Croquetas de pescado AF (90g)","Pollo esmechado (90g)","Carne molida magra (90g)","Jamón de pavo (3 reb)"],
+    carb: ["Arroz blanco (½ tz)","Yuca sancochada (120g)","Batata al vapor (1 und)","Arepa mediana (1 und)","Casabe (60g)","Papa al horno (1 und)","Bollito de maíz (2 und)","Tortilla de plátano (1 und)","Galletas de arroz SG (2 paq)","Quinoa (½ tz)"],
+    veg:  ["Calabacín salteado (1 tz)","Brócoli al vapor (1 tz)","Vainitas sancochadas (½ tz)","Zanahoria asada (½ tz)","Espinacas salteadas (1 tz)","Berenjena a la plancha (1 tz)","Ensalada de tomate y pepino","Acelga al vapor (1 tz)","Palmito (1 tz)","Auyama sancochada (½ tz)"],
+    fat:  ["Aguacate (1/8 und)","Aceite de oliva (1 cdta)","Aceitunas (5 und)","Almendras (6 und)","Margarina vegetal SG (1 cdta)"]
   },
   en: {
-    prot: ["Grilled chicken","Lean roast beef","Baked fish","Canned tuna","Baked turkey","Eggs (2)","AF fish croquettes"],
-    carb: ["White rice (½ cup)","Boiled cassava","Baked sweet potato","Medium arepa","Green plantain","Cassava bread (60g)","Baked potato (1)"],
-    veg:  ["Sautéed zucchini","Steamed broccoli","Green beans","Roasted carrot","Spinach","Grilled eggplant","Roasted peppers"],
-    fat:  ["Avocado (¼)","Olive oil (1 tsp)","Olives (5)"]
+    prot: ["Grilled chicken (90g)","Lean roast beef (90g)","Baked fish (90g)","Canned tuna in water (90g)","Baked turkey (90g)","2 egg whites","AF fish croquettes (90g)","Shredded chicken (90g)","Lean ground beef (90g)","Turkey ham (3 slices)"],
+    carb: ["White rice (½ cup)","Boiled cassava (120g)","Steamed sweet potato (1)","Medium arepa (1)","Cassava bread (60g)","Baked potato (1)","Corn dumplings (2)","Plantain tortilla (1)","GF rice crackers (2 packs)","Quinoa (½ cup)"],
+    veg:  ["Sautéed zucchini (1 cup)","Steamed broccoli (1 cup)","Boiled green beans (½ cup)","Roasted carrot (½ cup)","Sautéed spinach (1 cup)","Grilled eggplant (1 cup)","Tomato & cucumber salad","Steamed chard (1 cup)","Hearts of palm (1 cup)","Boiled pumpkin (½ cup)"],
+    fat:  ["Avocado (1/8)","Olive oil (1 tsp)","Olives (5)","Almonds (6)","GF vegan margarine (1 tsp)"]
   },
   no: {
-    prot: ["Grillet kylling","Magert stekt kjøtt","Bakt fisk","Hermetisk tunfisk","Bakt kalkun","Egg (2)","Luftfritert fiskekaker"],
-    carb: ["Hvit ris (½ kopp)","Kokt kassava","Bakt søtpotet","Medium arepa","Grønn banan","Kassavabrød (60g)","Bakt potet (1)"],
-    veg:  ["Sautert squash","Dampet brokkoli","Grønne bønner","Stekt gulrot","Spinat","Grillet aubergine","Stekt paprika"],
-    fat:  ["Avokado (¼)","Olivenolje (1 ts)","Oliven (5)"]
+    prot: ["Grillet kylling (90g)","Magert stekt kjøtt (90g)","Bakt fisk (90g)","Hermetisk tunfisk i vann (90g)","Bakt kalkun (90g)","2 eggehviter","Luftfriterte fiskekaker (90g)","Revet kylling (90g)","Mager kjøttdeig (90g)","Kalkunskinke (3 skiver)"],
+    carb: ["Hvit ris (½ kopp)","Kokt kassava (120g)","Dampet søtpotet (1)","Medium arepa (1)","Kassavabrød (60g)","Bakt potet (1)","Maisballer (2)","Banantortilla (1)","Glutenfrie riskaker (2 pakker)","Quinoa (½ kopp)"],
+    veg:  ["Sautert squash (1 kopp)","Dampet brokkoli (1 kopp)","Kokte grønne bønner (½ kopp)","Stekt gulrot (½ kopp)","Sautert spinat (1 kopp)","Grillet aubergine (1 kopp)","Tomat- og agurkesalat","Dampet mangold (1 kopp)","Palmehjerter (1 kopp)","Kokt gresskar (½ kopp)"],
+    fat:  ["Avokado (1/8)","Olivenolje (1 ts)","Oliven (5)","Mandler (6)","Glutenfri vegansk margarin (1 ts)"]
   }
 };
 

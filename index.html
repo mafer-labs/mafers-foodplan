@@ -2012,7 +2012,7 @@ function importAppleHealth(input) {
 
       let records = [];
       glucoseTypes.forEach(type => {
-        const nodes = doc.querySelectorAll(\`Record[type="\${type}"]\`);
+        const nodes = doc.querySelectorAll(`Record[type="${type}"]`);
         nodes.forEach(node => {
           const val = parseFloat(node.getAttribute('value'));
           const unit = node.getAttribute('unit') || 'mg/dL';
@@ -2051,9 +2051,9 @@ function importAppleHealth(input) {
       renderSparkline();
 
       status.style.color = '#30D158';
-      status.textContent = lang === 'es' ? \`✅ \${newRecords.length} lecturas importadas\` :
-                           lang === 'en' ? \`✅ \${newRecords.length} readings imported\` :
-                           \`✅ \${newRecords.length} målinger importert\`;
+      status.textContent = lang === 'es' ? `✅ ${newRecords.length} lecturas importadas` :
+                           lang === 'en' ? `✅ ${newRecords.length} readings imported` :
+                           `✅ ${newRecords.length} målinger importert`;
 
       input.value = '';
     } catch (e) {

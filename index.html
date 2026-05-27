@@ -1545,6 +1545,29 @@ const COMBOS = {
 };
 
 /* ============================================================
+   MEAL SWAP OPTIONS — per nutritionist food list substitutions
+   Grouped by meal type. All within same caloric/macro group.
+   ============================================================ */
+const SWAPS = {
+  b: {  // Breakfast protein swaps
+    es: ["Queso de cabra (90g)","Queso semi duro (90g)","Jamón de pavo (3 reb)","Pollo esmechado (90g)","Carne molida magra (90g)","Pavo (90g)","Atún al natural (90g)","2 claras + 1 huevo entero","Pisillo de pescado (6 cdas)","Sardinas frescas (2 und)"],
+    en: ["Goat cheese (90g)","Semi-hard cheese (90g)","Turkey ham (3 slices)","Shredded chicken (90g)","Lean ground beef (90g)","Turkey (90g)","Canned tuna (90g)","2 whites + 1 whole egg","Flaked fish (6 tbsp)","Fresh sardines (2 units)"],
+    no: ["Geitost (90g)","Halvfast ost (90g)","Kalkunskinke (3 skiver)","Revet kylling (90g)","Mager kjøttdeig (90g)","Kalkun (90g)","Hermetisk tunfisk (90g)","2 hviter + 1 helt egg","Flakket fisk (6 ss)","Ferske sardiner (2 stk)"]
+  },
+  l: {  // Lunch protein swaps
+    es: ["Pechuga de pollo a la plancha (90g)","Bistec de res magro (90g)","Pescado al horno: carite, pargo o mero (90g)","Atún al ajillo (90g)","Lomo de cerdo a la plancha (90g)","Carne molida en hamburguesa (90g)","Pollo guisado sin harina (90g)","Sardinas frescas (2 und)","Croquetas de pescado AF (90g)","Pisillo de pescado (6 cdas)"],
+    en: ["Grilled chicken breast (90g)","Lean beef steak (90g)","Baked fish: snapper, grouper or mackerel (90g)","Garlic tuna (90g)","Grilled pork loin (90g)","Ground beef burger (90g)","Chicken stew without flour (90g)","Fresh sardines (2 units)","AF fish croquettes (90g)","Flaked fish (6 tbsp)"],
+    no: ["Grillet kyllingbryst (90g)","Mager biffstek (90g)","Bakt fisk: snapper, steinbit eller makrell (90g)","Hvitløkstunfisk (90g)","Grillet svinefilet (90g)","Kjøttdeigburger (90g)","Kyllinggryte uten mel (90g)","Ferske sardiner (2 stk)","Luftfriterte fiskekaker (90g)","Flakket fisk (6 ss)"]
+  },
+  d: {  // Dinner swaps (lighter)
+    es: ["Ensalada de atún (90g)","Tortilla de calabacín + 2 claras","Sopa de auyama + carne magra (90g)","Jamón de pavo + galletas de arroz (2 paq)","Queso búfala (30g) + ensalada caprese","Pollo esmechado + arepa pequeña","Pisillo de pescado + casabe (40g)","Hamburguesa de carne (90g) + lechuga wrap"],
+    en: ["Tuna salad (90g)","Zucchini omelette + 2 egg whites","Pumpkin soup + lean beef (90g)","Turkey ham + rice crackers (2 packs)","Buffalo cheese (30g) + caprese salad","Shredded chicken + small arepa","Flaked fish + cassava bread (40g)","Beef burger (90g) + lettuce wrap"],
+    no: ["Tunfisksalat (90g)","Squashomelett + 2 eggehviter","Gresskarsuppe + magert kjøtt (90g)","Kalkunskinke + riskaker (2 pakker)","Bøffelost (30g) + caprese-salat","Revet kylling + liten arepa","Flakket fisk + kassavabrød (40g)","Kjøttdeigburger (90g) + salatblad-wrap"]
+  }
+};
+
+
+/* ============================================================
    APP STATE
    ============================================================ */
 let lang        = localStorage.getItem('mafer_lang') || 'es';
@@ -1915,30 +1938,6 @@ function showToast(msg) {
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2200);
 }
-
-
-/* ============================================================
-   MEAL SWAP OPTIONS — per nutritionist food list substitutions
-   Grouped by meal type. All within same caloric/macro group.
-   ============================================================ */
-const SWAPS = {
-  b: {  // Breakfast protein swaps
-    es: ["Queso de cabra (90g)","Queso semi duro (90g)","Jamón de pavo (3 reb)","Pollo esmechado (90g)","Carne molida magra (90g)","Pavo (90g)","Atún al natural (90g)","2 claras + 1 huevo entero","Pisillo de pescado (6 cdas)","Sardinas frescas (2 und)"],
-    en: ["Goat cheese (90g)","Semi-hard cheese (90g)","Turkey ham (3 slices)","Shredded chicken (90g)","Lean ground beef (90g)","Turkey (90g)","Canned tuna (90g)","2 whites + 1 whole egg","Flaked fish (6 tbsp)","Fresh sardines (2 units)"],
-    no: ["Geitost (90g)","Halvfast ost (90g)","Kalkunskinke (3 skiver)","Revet kylling (90g)","Mager kjøttdeig (90g)","Kalkun (90g)","Hermetisk tunfisk (90g)","2 hviter + 1 helt egg","Flakket fisk (6 ss)","Ferske sardiner (2 stk)"]
-  },
-  l: {  // Lunch protein swaps
-    es: ["Pechuga de pollo a la plancha (90g)","Bistec de res magro (90g)","Pescado al horno: carite, pargo o mero (90g)","Atún al ajillo (90g)","Lomo de cerdo a la plancha (90g)","Carne molida en hamburguesa (90g)","Pollo guisado sin harina (90g)","Sardinas frescas (2 und)","Croquetas de pescado AF (90g)","Pisillo de pescado (6 cdas)"],
-    en: ["Grilled chicken breast (90g)","Lean beef steak (90g)","Baked fish: snapper, grouper or mackerel (90g)","Garlic tuna (90g)","Grilled pork loin (90g)","Ground beef burger (90g)","Chicken stew without flour (90g)","Fresh sardines (2 units)","AF fish croquettes (90g)","Flaked fish (6 tbsp)"],
-    no: ["Grillet kyllingbryst (90g)","Mager biffstek (90g)","Bakt fisk: snapper, steinbit eller makrell (90g)","Hvitløkstunfisk (90g)","Grillet svinefilet (90g)","Kjøttdeigburger (90g)","Kyllinggryte uten mel (90g)","Ferske sardiner (2 stk)","Luftfriterte fiskekaker (90g)","Flakket fisk (6 ss)"]
-  },
-  d: {  // Dinner swaps (lighter)
-    es: ["Ensalada de atún (90g)","Tortilla de calabacín + 2 claras","Sopa de auyama + carne magra (90g)","Jamón de pavo + galletas de arroz (2 paq)","Queso búfala (30g) + ensalada caprese","Pollo esmechado + arepa pequeña","Pisillo de pescado + casabe (40g)","Hamburguesa de carne (90g) + lechuga wrap"],
-    en: ["Tuna salad (90g)","Zucchini omelette + 2 egg whites","Pumpkin soup + lean beef (90g)","Turkey ham + rice crackers (2 packs)","Buffalo cheese (30g) + caprese salad","Shredded chicken + small arepa","Flaked fish + cassava bread (40g)","Beef burger (90g) + lettuce wrap"],
-    no: ["Tunfisksalat (90g)","Squashomelett + 2 eggehviter","Gresskarsuppe + magert kjøtt (90g)","Kalkunskinke + riskaker (2 pakker)","Bøffelost (30g) + caprese-salat","Revet kylling + liten arepa","Flakket fisk + kassavabrød (40g)","Kjøttdeigburger (90g) + salatblad-wrap"]
-  }
-};
-
 /* ============================================================
    MEAL SWAP UI
    ============================================================ */

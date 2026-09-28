@@ -4,23 +4,24 @@
    Version: bump CACHE_NAME to force update on deploy.
    ============================================================ */
 
-const CACHE_NAME = 'plan-mafer-v1';
+const CACHE_NAME = 'plan-mafer-v2';
 
-// Files to cache on install (app shell)
-const SHELL = [
+// Local files are cached atomically; optional remote assets cannot break install.
+const LOCAL_SHELL = [
+  './',
   './index.html',
   './manifest.json',
-  'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap'
+  './icon-192.png',
+  './icon-512.png'
 ];
+
+const FONT_STYLESHEET = 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap';
 
 // Install: cache the app shell
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(SHELL).catch(() => {
-        // Font CDN may fail offline — that's OK, just cache what we can
-        return cache.add('./index.html');
-      });
+      return cache.addAll(LOCAL_SHELL).then(() => cache.add(FONT_STYLESHEET).catch(() => undefined));
     }).then(() => self.skipWaiting())
   );
 });
@@ -41,8 +42,27 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(event.request.url);
 
+  // Navigations use the network when available and fall back to the app shell.
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response.ok) {
+            caches.open(CACHE_NAME).then(cache => cache.put('./index.html', response.clone()));
+          }
+          return response;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
   // App shell files → cache first
-  if (url.pathname.endsWith('index.html') || url.pathname.endsWith('manifest.json')) {
+  if (url.origin === self.location.origin &&
+      (url.pathname.endsWith('index.html') ||
+       url.pathname.endsWith('manifest.json') ||
+       url.pathname.endsWith('icon-192.png') ||
+       url.pathname.endsWith('icon-512.png'))) {
     event.respondWith(
       caches.match(event.request).then(cached => {
         const networkFetch = fetch(event.request).then(response => {
@@ -58,13 +78,13 @@ self.addEventListener('fetch', event => {
   }
 
   // Google Fonts → cache first, fallback gracefully
-  if (url.hostname.includes('fonts.g')) {
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
     event.respondWith(
       caches.match(event.request).then(cached => cached ||
         fetch(event.request).then(response => {
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+          if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
           return response;
-        }).catch(() => new Response('', { status: 408 }))
+        }).catch(() => new Response('', { status: 504, statusText: 'Offline' }))
       )
     );
     return;
@@ -72,6 +92,13 @@ self.addEventListener('fetch', event => {
 
   // Everything else → network with cache fallback
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+    fetch(event.request)
+      .then(response => {
+        if (response.ok && url.origin === self.location.origin) {
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

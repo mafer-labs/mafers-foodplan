@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Plan Mafer 🍎</title>
+  <meta name="description" content="Plan nutricional de 10 días con ideas de comidas, seguimiento de agua y diario de salud.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
@@ -45,6 +46,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html { scroll-behavior: smooth; }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 3px solid #F4A261;
+      outline-offset: 3px;
+    }
 
     body {
       font-family: 'Nunito', sans-serif;
@@ -846,11 +855,25 @@
 
     /* Swap hint on meal cards */
     .swap-hint {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: none;
+      text-align: left;
+      font-family: 'Nunito', sans-serif;
       font-size: 0.7rem;
       color: var(--green-mid);
       font-weight: 700;
       margin-top: 6px;
       letter-spacing: 0.3px;
+      cursor: pointer;
+    }
+
+    .swap-option {
+      width: 100%;
+      text-align: left;
+      font-family: 'Nunito', sans-serif;
     }
 
     /* PWA install banner */
@@ -893,9 +916,9 @@
       <div class="app-tag" id="appTag">1300 kcal · Sin Gluten · Low FODMAP</div>
     </div>
     <div class="lang-switch">
-      <button class="lang-btn active" onclick="setLang('es')">ES</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" onclick="setLang('no')">NO</button>
+      <button type="button" class="lang-btn active" data-lang="es" onclick="setLang('es')" aria-label="Español" aria-pressed="true">ES</button>
+      <button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')" aria-label="English" aria-pressed="false">EN</button>
+      <button type="button" class="lang-btn" data-lang="no" onclick="setLang('no')" aria-label="Norsk" aria-pressed="false">NO</button>
     </div>
   </div>
 
@@ -905,7 +928,7 @@
       <span id="progressPct">0%</span>
     </div>
     <div class="progress-track">
-      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      <div class="progress-fill" id="progressFill" style="width:0%" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
     </div>
   </div>
 
@@ -918,7 +941,7 @@
      ================================================ -->
 <div id="section-plan" class="section active">
   <div id="planContent"></div>
-  <button class="reset-cycle-btn" id="resetBtn" onclick="resetCycle()">↺ Reiniciar ciclo de 10 días</button>
+  <button type="button" class="reset-cycle-btn" id="resetBtn" onclick="resetCycle()">↺ Reiniciar ciclo de 10 días</button>
 </div>
 
 
@@ -930,17 +953,17 @@
   <div class="section-sub" id="ideaSub">Genera una combinación válida al instante</div>
 
   <div class="gen-buttons">
-    <button class="gen-btn lunch" onclick="generateMeal('lunch')">
+    <button type="button" class="gen-btn lunch" onclick="generateMeal('lunch')">
       <span class="gen-icon">🍲</span>
       <span id="btnLunch">Almuerzo</span>
     </button>
-    <button class="gen-btn dinner" onclick="generateMeal('dinner')">
+    <button type="button" class="gen-btn dinner" onclick="generateMeal('dinner')">
       <span class="gen-icon">🌙</span>
       <span id="btnDinner">Cena</span>
     </button>
   </div>
 
-  <div class="result-card" id="resultCard">
+  <div class="result-card" id="resultCard" aria-live="polite">
     <div class="result-title" id="resultTitle">Sugerencia</div>
     <div id="resultRows"></div>
     <div class="meal-note" id="resultNote" style="margin-top:10px;">🔥 Preparación: a la plancha, horno o air fryer</div>
@@ -966,13 +989,13 @@
 
   <!-- Apple Health Import -->
   <div class="apple-health-card">
-    <div class="ah-title">🍎 Importar desde Apple Health</div>
+    <div class="ah-title" id="ahTitle">🍎 Importar desde Apple Health</div>
     <div class="ah-sub" id="ahSub">Exporta desde la app Salud → tu foto → Exportar datos → sube el ZIP aquí</div>
     <label class="ah-upload-btn" for="ahFileInput">
       <span id="ahBtnLabel">📂 Seleccionar archivo ZIP / XML</span>
-      <input type="file" id="ahFileInput" accept=".zip,.xml" style="display:none" onchange="importAppleHealth(this)">
+      <input type="file" id="ahFileInput" accept=".xml,text/xml,application/xml" style="display:none" onchange="importAppleHealth(this)">
     </label>
-    <div id="ahStatus" class="ah-status"></div>
+    <div id="ahStatus" class="ah-status" role="status" aria-live="polite"></div>
   </div>
 
   <!-- Water tracker -->
@@ -992,23 +1015,23 @@
   <div class="log-form">
     <div class="form-title" id="formTitle">Nuevo Registro</div>
     <div class="form-group">
-      <label id="lblGluc">Glucosa (mg/dL)</label>
-      <input type="number" id="inputGluc" placeholder="95" inputmode="numeric">
+      <label id="lblGluc" for="inputGluc">Glucosa (mg/dL)</label>
+      <input type="number" id="inputGluc" placeholder="95" inputmode="numeric" min="20" max="1000" step="1">
     </div>
     <div class="form-group">
-      <label id="lblSymp">Síntomas</label>
+      <label id="lblSymp" for="inputSymp">Síntomas</label>
       <input type="text" id="inputSymp" placeholder="ej: fatiga leve, náuseas...">
     </div>
     <div class="form-group">
-      <label id="lblNote">Notas</label>
+      <label id="lblNote" for="inputNote">Notas</label>
       <textarea id="inputNote" placeholder="ej: comí tarde, entrené hoy..."></textarea>
     </div>
-    <button class="save-btn" id="saveBtn" onclick="saveLog()">Guardar Registro</button>
+    <button type="button" class="save-btn" id="saveBtn" onclick="saveLog()">Guardar Registro</button>
   </div>
 
   <div class="history-title" id="histTitle">Historial</div>
   <div id="logHistory"></div>
-  <button class="clear-btn" id="clearBtn" onclick="clearLogs()">Borrar todo el historial</button>
+  <button type="button" class="clear-btn" id="clearBtn" onclick="clearLogs()">Borrar todo el historial</button>
 </div>
 
 
@@ -1016,15 +1039,15 @@
      NAV
      ================================================ -->
 <nav>
-  <button class="nav-btn active" id="nav-plan" onclick="switchTab('plan', this)">
+  <button type="button" class="nav-btn active" id="nav-plan" onclick="switchTab('plan', this)" aria-controls="section-plan" aria-current="page">
     <span class="nav-icon">📅</span>
     <span class="nav-label" data-key="navPlan">Plan</span>
   </button>
-  <button class="nav-btn" id="nav-ideas" onclick="switchTab('ideas', this)">
+  <button type="button" class="nav-btn" id="nav-ideas" onclick="switchTab('ideas', this)" aria-controls="section-ideas">
     <span class="nav-icon">👩‍🍳</span>
     <span class="nav-label" data-key="navIdeas">Ideas</span>
   </button>
-  <button class="nav-btn" id="nav-health" onclick="switchTab('health', this)">
+  <button type="button" class="nav-btn" id="nav-health" onclick="switchTab('health', this)" aria-controls="section-health">
     <span class="nav-icon">📈</span>
     <span class="nav-label" data-key="navHealth">Salud</span>
   </button>
@@ -1035,24 +1058,24 @@
 <div class="swap-overlay" id="swapOverlay" onclick="closeSwap()"></div>
 
 <!-- Meal swap panel -->
-<div class="swap-panel" id="swapPanel">
+<div class="swap-panel" id="swapPanel" role="dialog" aria-modal="true" aria-labelledby="swapTitle" aria-hidden="true">
   <div class="swap-handle"></div>
   <div class="swap-title" id="swapTitle">Opciones de sustitución</div>
   <div id="swapOptions"></div>
-  <button class="swap-close" onclick="closeSwap()" id="swapCloseBtn">Cerrar</button>
+  <button type="button" class="swap-close" onclick="closeSwap()" id="swapCloseBtn">Cerrar</button>
 </div>
 
 <!-- PWA install banner -->
 <div class="pwa-banner" id="pwaBanner">
   <span id="pwaBannerText">📲 Instalar Plan Mafer en tu teléfono</span>
   <div style="display:flex;align-items:center;gap:4px">
-    <button class="pwa-install-btn" id="pwaInstallBtn" onclick="installPWA()">Instalar</button>
-    <button class="pwa-dismiss" onclick="dismissPWA()">×</button>
+    <button type="button" class="pwa-install-btn" id="pwaInstallBtn" onclick="installPWA()">Instalar</button>
+    <button type="button" class="pwa-dismiss" onclick="dismissPWA()" aria-label="Cerrar">×</button>
   </div>
 </div>
 
 <!-- Toast notification -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 
 <script>
@@ -1110,6 +1133,9 @@ const T = {
     catFat:      "Grasa",
     glucoseLabel:"Glucosa",
     sympLabel:   "Síntomas",
+    toggleMeal:  "Marcar comida como completada",
+    glass:       "Vaso",
+    swapHint:    "↔ Toca para sustituir",
   },
   en: {
     appTag:      "1300 kcal · Gluten Free · Low FODMAP",
@@ -1161,6 +1187,9 @@ const T = {
     catFat:      "Fat",
     glucoseLabel:"Glucose",
     sympLabel:   "Symptoms",
+    toggleMeal:  "Mark meal as complete",
+    glass:       "Glass",
+    swapHint:    "↔ Tap to swap",
   },
   no: {
     appTag:      "1300 kcal · Glutenfri · Lav FODMAP",
@@ -1212,6 +1241,9 @@ const T = {
     catFat:      "Fett",
     glucoseLabel:"Glukose",
     sympLabel:   "Symptomer",
+    toggleMeal:  "Merk måltidet som fullført",
+    glass:       "Glass",
+    swapHint:    "↔ Trykk for å bytte",
   }
 };
 
@@ -1572,11 +1604,87 @@ const SWAPS = {
 /* ============================================================
    APP STATE
    ============================================================ */
-let lang        = localStorage.getItem('mafer_lang') || 'es';
-let activeDay   = 1;  // BUGFIX: stored in JS, never read from DOM
-let mealChecks  = JSON.parse(localStorage.getItem('mafer_checks') || '{}');
-let waterData   = JSON.parse(localStorage.getItem('mafer_water')  || '{"date":"","count":0}');
-let healthLogs  = JSON.parse(localStorage.getItem('mafer_logs')   || '[]');
+const STORAGE = {
+  lang: 'mafer_lang',
+  activeDay: 'mafer_active_day',
+  checks: 'mafer_checks',
+  water: 'mafer_water',
+  logs: 'mafer_logs',
+  swaps: 'mafer_swaps',
+  pwaDismissed: 'mafer_pwa_dismissed'
+};
+
+function readStorage(key) {
+  try { return localStorage.getItem(key); }
+  catch { return null; }
+}
+
+function writeStorage(key, value) {
+  try { localStorage.setItem(key, value); }
+  catch { /* The app remains usable when storage is unavailable or full. */ }
+}
+
+function removeStorage(key) {
+  try { localStorage.removeItem(key); }
+  catch { /* Ignore unavailable storage. */ }
+}
+
+function readJSON(key, fallback) {
+  const raw = readStorage(key);
+  if (!raw) return fallback;
+  try { return JSON.parse(raw); }
+  catch { return fallback; }
+}
+
+function saveJSON(key, value) {
+  writeStorage(key, JSON.stringify(value));
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  })[char]);
+}
+
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+const storedLang = readStorage(STORAGE.lang);
+let lang = storedLang && T[storedLang] ? storedLang : 'es';
+
+const storedDay = Number.parseInt(readStorage(STORAGE.activeDay), 10);
+let activeDay = Number.isInteger(storedDay) && storedDay >= 1 && storedDay <= 10 ? storedDay : 1;
+
+const storedChecks = readJSON(STORAGE.checks, {});
+let mealChecks = storedChecks && typeof storedChecks === 'object' && !Array.isArray(storedChecks)
+  ? storedChecks : {};
+
+const storedWater = readJSON(STORAGE.water, { date: '', count: 0 });
+let waterData = {
+  date: typeof storedWater?.date === 'string' ? storedWater.date : '',
+  count: Math.min(8, Math.max(0, Number.parseInt(storedWater?.count, 10) || 0))
+};
+
+const storedLogs = readJSON(STORAGE.logs, []);
+let healthLogs = Array.isArray(storedLogs)
+  ? storedLogs.filter(log => log && typeof log === 'object').map(log => ({
+      timestamp: typeof log.timestamp === 'string' ? log.timestamp : '',
+      date: typeof log.date === 'string' ? log.date : '',
+      gluc: typeof log.gluc === 'string' || typeof log.gluc === 'number' ? String(log.gluc) : '',
+      symp: typeof log.symp === 'string' ? log.symp : '',
+      note: typeof log.note === 'string' ? log.note : ''
+    }))
+  : [];
+
+const storedSwaps = readJSON(STORAGE.swaps, {});
+let swapOverrides = storedSwaps && typeof storedSwaps === 'object' && !Array.isArray(storedSwaps)
+  ? storedSwaps : {};
+
+let currentSuggestion = null;
 
 const TOTAL_CHECKABLE = 50; // 10 days × 5 meals (b, sa, l, sp, d)
 
@@ -1598,18 +1706,29 @@ function init() {
    LANGUAGE
    ============================================================ */
 function setLang(l) {
+  if (!T[l]) return;
   lang = l;
-  localStorage.setItem('mafer_lang', l);
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  writeStorage(STORAGE.lang, l);
+  document.documentElement.lang = l;
+  document.querySelectorAll('.lang-btn').forEach(button => {
+    const isActive = button.dataset.lang === l;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
   applyLang();
   renderDayScroller();
   renderPlan();
+  renderWater();
+  renderSparkline();
+  renderLogs();
+  renderSuggestion();
+  if (swapContext) openSwap(swapContext.mealType, swapContext.day);
 }
 
 function t(key) { return T[lang][key] || T['es'][key] || ''; }
 
 function applyLang() {
+  document.documentElement.lang = lang;
   // header
   document.getElementById('appTag').textContent        = t('appTag');
   document.getElementById('progressLabel').textContent = t('progressLabel');
@@ -1648,15 +1767,24 @@ function applyLang() {
 
   // Apple Health
   const ahStrings = {
-    es: { sub: 'Exporta desde la app Salud → tu foto → Exportar datos → sube el XML aquí', btn: '📂 Seleccionar archivo XML' },
-    en: { sub: 'Export from Health app → your photo → Export All → upload the XML here', btn: '📂 Select XML file' },
-    no: { sub: 'Eksporter fra Helse-app → ditt bilde → Eksporter data → last opp XML her', btn: '📂 Velg XML-fil' }
+    es: { title: '🍎 Importar desde Apple Health', sub: 'Exporta desde la app Salud → tu foto → Exportar datos → sube el XML aquí', btn: '📂 Seleccionar archivo XML' },
+    en: { title: '🍎 Import from Apple Health', sub: 'Export from Health app → your photo → Export All → upload the XML here', btn: '📂 Select XML file' },
+    no: { title: '🍎 Importer fra Apple Health', sub: 'Eksporter fra Helse-app → ditt bilde → Eksporter data → last opp XML her', btn: '📂 Velg XML-fil' }
   };
-  if (document.getElementById('ahSub')) document.getElementById('ahSub').textContent = ahStrings[lang]?.sub || ahStrings.es.sub;
-  if (document.getElementById('ahBtnLabel')) document.getElementById('ahBtnLabel').textContent = ahStrings[lang]?.btn || ahStrings.es.btn;
+  const ahCopy = ahStrings[lang] || ahStrings.es;
+  document.getElementById('ahTitle').textContent = ahCopy.title;
+  document.getElementById('ahSub').textContent = ahCopy.sub;
+  document.getElementById('ahBtnLabel').textContent = ahCopy.btn;
   // PWA banner
-  const pwaStr = { es: '📲 Instalar Plan Mafer en tu teléfono', en: '📲 Install Plan Mafer on your phone', no: '📲 Installer Plan Mafer på telefonen' };
-  if (document.getElementById('pwaBannerText')) document.getElementById('pwaBannerText').textContent = pwaStr[lang] || pwaStr.es;
+  const pwaStr = {
+    es: { text: '📲 Instalar Plan Mafer en tu teléfono', action: 'Instalar', close: 'Cerrar' },
+    en: { text: '📲 Install Plan Mafer on your phone', action: 'Install', close: 'Close' },
+    no: { text: '📲 Installer Plan Mafer på telefonen', action: 'Installer', close: 'Lukk' }
+  };
+  const pwaCopy = pwaStr[lang] || pwaStr.es;
+  document.getElementById('pwaBannerText').textContent = pwaCopy.text;
+  document.getElementById('pwaInstallBtn').textContent = pwaCopy.action;
+  document.querySelector('.pwa-dismiss').setAttribute('aria-label', pwaCopy.close);
 }
 
 
@@ -1664,9 +1792,16 @@ function applyLang() {
    PROGRESS BAR
    ============================================================ */
 function updateProgress() {
-  const checked = Object.keys(mealChecks).length;
+  let checked = 0;
+  for (let day = 1; day <= 10; day++) {
+    ['b', 'sa', 'l', 'sp', 'd'].forEach(meal => {
+      if (mealChecks[`d${day}_${meal}`] === true) checked++;
+    });
+  }
   const pct = Math.round((checked / TOTAL_CHECKABLE) * 100);
-  document.getElementById('progressFill').style.width = pct + '%';
+  const progressFill = document.getElementById('progressFill');
+  progressFill.style.width = pct + '%';
+  progressFill.setAttribute('aria-valuenow', String(pct));
   document.getElementById('progressPct').textContent  = pct + '%';
 }
 
@@ -1678,17 +1813,21 @@ function renderDayScroller() {
   scroller.innerHTML = '';
   for (let d = 1; d <= 10; d++) {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'day-btn' +
       (d === activeDay ? ' active' : '') +
       (isDayDone(d)    ? ' done'   : '');
     btn.textContent = t('day') + ' ' + d;
+    if (d === activeDay) btn.setAttribute('aria-current', 'true');
     btn.onclick = () => goToDay(d);
     scroller.appendChild(btn);
   }
 }
 
 function goToDay(d) {
+  if (!Number.isInteger(d) || d < 1 || d > 10) return;
   activeDay = d;
+  writeStorage(STORAGE.activeDay, String(d));
   renderDayScroller();
   renderPlan();
 }
@@ -1712,23 +1851,21 @@ function renderPlan() {
     { key: `d${d}_d`,  label: t('mealD'),  body: m.d,          checkable: true,  cls: 'meal-d'  },
   ];
 
-  const swapOverrides = JSON.parse(localStorage.getItem('mafer_swaps') || '{}');
-  const swapHintText = lang === 'es' ? '↔ Toca para sustituir' : lang === 'en' ? '↔ Tap to swap' : '↔ Trykk for å bytte';
-
   document.getElementById('planContent').innerHTML = meals.map(meal => {
     const done = !!mealChecks[meal.key];
     const baseType = meal.key.replace(/d\d+_/, '');
     const canSwap = ['b','l','d'].includes(baseType);
-    const swapIdx = swapOverrides[meal.key];
+    const swapIdx = Number.parseInt(swapOverrides[meal.key], 10);
     const swapOptions = SWAPS[baseType]?.[lang] || SWAPS[baseType]?.['es'];
-    const bodyText = (canSwap && swapIdx !== undefined && swapOptions) ? swapOptions[swapIdx] : meal.body;
+    const hasValidSwap = canSwap && Number.isInteger(swapIdx) && swapOptions?.[swapIdx];
+    const bodyText = hasValidSwap ? swapOptions[swapIdx] : meal.body;
 
     return `
       <div class="card ${meal.cls}${done ? ' checked' : ''}" id="card-${meal.key}">
-        <div class="meal-title">${meal.label}</div>
-        <div class="meal-body">${bodyText}</div>
-        ${canSwap ? `<div class="swap-hint" onclick="openSwap('${meal.key}', ${d})">${swapHintText}</div>` : ''}
-        <button class="check-btn" onclick="toggleMeal('${meal.key}', ${d})" aria-label="Marcar como completado"></button>
+        <div class="meal-title">${escapeHTML(meal.label)}</div>
+        <div class="meal-body">${escapeHTML(bodyText)}</div>
+        ${canSwap ? `<button type="button" class="swap-hint" onclick="openSwap('${meal.key}', ${d})">${escapeHTML(t('swapHint'))}</button>` : ''}
+        <button type="button" class="check-btn" onclick="toggleMeal('${meal.key}', ${d})" aria-label="${escapeHTML(t('toggleMeal'))}" aria-pressed="${done}"></button>
       </div>`;
   }).join('');
 }
@@ -1737,16 +1874,18 @@ function renderPlan() {
    MEAL TOGGLE
    ============================================================ */
 function toggleMeal(key, day) {
+  if (!/^d(?:10|[1-9])_(?:b|sa|l|sp|d)$/.test(key)) return;
   if (mealChecks[key]) {
     delete mealChecks[key];
   } else {
     mealChecks[key] = true;
   }
-  localStorage.setItem('mafer_checks', JSON.stringify(mealChecks));
+  saveJSON(STORAGE.checks, mealChecks);
   // Update only the tapped card for snappy UX
   const card = document.getElementById('card-' + key);
   if (card) {
     card.classList.toggle('checked', !!mealChecks[key]);
+    card.querySelector('.check-btn')?.setAttribute('aria-pressed', String(!!mealChecks[key]));
   }
   // Refresh scroller badge + progress
   renderDayScroller();
@@ -1759,8 +1898,9 @@ function toggleMeal(key, day) {
 function resetCycle() {
   if (!confirm(t('confirmReset'))) return;
   mealChecks = {};
-  localStorage.removeItem('mafer_checks');
+  removeStorage(STORAGE.checks);
   activeDay = 1;
+  writeStorage(STORAGE.activeDay, '1');
   renderDayScroller();
   renderPlan();
   updateProgress();
@@ -1771,19 +1911,30 @@ function resetCycle() {
    RANDOM MEAL GENERATOR
    ============================================================ */
 function generateMeal(type) {
-  const c    = COMBOS[lang];
-  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-  const prot = pick(c.prot);
-  const carb = pick(c.carb);
-  const veg  = pick(c.veg);
-  const fat  = pick(c.fat);
+  if (!['lunch', 'dinner'].includes(type)) return;
+  const c = COMBOS[lang];
+  const pickIndex = arr => Math.floor(Math.random() * arr.length);
+  currentSuggestion = {
+    type,
+    prot: pickIndex(c.prot),
+    carb: pickIndex(c.carb),
+    veg: pickIndex(c.veg),
+    fat: pickIndex(c.fat)
+  };
+  renderSuggestion();
+}
+
+function renderSuggestion() {
+  if (!currentSuggestion) return;
+  const c = COMBOS[lang];
+  const { type, prot, carb, veg, fat } = currentSuggestion;
 
   const rows = type === 'lunch'
-    ? [{cat: t('catProt'), val: prot}, {cat: t('catCarb'), val: carb}, {cat: t('catVeg'), val: veg}, {cat: t('catFat'), val: fat}]
-    : [{cat: t('catProt'), val: prot}, {cat: t('catCarb'), val: carb}, {cat: t('catVeg'), val: veg}];
+    ? [{cat: t('catProt'), val: c.prot[prot]}, {cat: t('catCarb'), val: c.carb[carb]}, {cat: t('catVeg'), val: c.veg[veg]}, {cat: t('catFat'), val: c.fat[fat]}]
+    : [{cat: t('catProt'), val: c.prot[prot]}, {cat: t('catCarb'), val: c.carb[carb]}, {cat: t('catVeg'), val: c.veg[veg]}];
 
   document.getElementById('resultRows').innerHTML = rows.map(r =>
-    `<div class="result-row"><span class="cat">${r.cat}</span><span>${r.val}</span></div>`
+    `<div class="result-row"><span class="cat">${escapeHTML(r.cat)}</span><span>${escapeHTML(r.val)}</span></div>`
   ).join('');
 
   const card = document.getElementById('resultCard');
@@ -1794,10 +1945,10 @@ function generateMeal(type) {
    WATER TRACKER
    ============================================================ */
 function checkWaterReset() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
   if (waterData.date !== today) {
     waterData = { date: today, count: 0 };
-    localStorage.setItem('mafer_water', JSON.stringify(waterData));
+    saveJSON(STORAGE.water, waterData);
   }
 }
 
@@ -1806,10 +1957,12 @@ function renderWater() {
   wrap.innerHTML = '';
   for (let i = 1; i <= 8; i++) {
     const btn = document.createElement('button');
+    btn.type        = 'button';
     btn.className   = 'glass-btn ' + (i <= waterData.count ? 'filled' : 'empty');
     btn.innerHTML   = `<span class="glass-icon">💧</span>`;
     btn.onclick     = () => setWater(i);
-    btn.setAttribute('aria-label', `Glass ${i}`);
+    btn.setAttribute('aria-label', `${t('glass')} ${i}`);
+    btn.setAttribute('aria-pressed', String(i <= waterData.count));
     wrap.appendChild(btn);
   }
   renderWaterCount();
@@ -1823,7 +1976,7 @@ function renderWaterCount() {
 function setWater(n) {
   // Toggle: click filled = unfill from that glass
   waterData.count = (waterData.count === n) ? n - 1 : n;
-  localStorage.setItem('mafer_water', JSON.stringify(waterData));
+  saveJSON(STORAGE.water, waterData);
   renderWater();
 }
 
@@ -1882,12 +2035,13 @@ function saveLog() {
 
   const now    = new Date();
   const entry  = {
+    timestamp: now.toISOString(),
     date: now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     gluc, symp, note
   };
 
   healthLogs.unshift(entry);
-  localStorage.setItem('mafer_logs', JSON.stringify(healthLogs));
+  saveJSON(STORAGE.logs, healthLogs);
 
   document.getElementById('inputGluc').value = '';
   document.getElementById('inputSymp').value = '';
@@ -1898,6 +2052,17 @@ function saveLog() {
   showToast(t('toastSaved'));
 }
 
+function formatLogDate(log) {
+  if (!log.timestamp) return log.date;
+  const parsed = new Date(log.timestamp);
+  if (Number.isNaN(parsed.getTime())) return log.date;
+  const locale = { es: 'es', en: 'en', no: 'nb' }[lang] || 'es';
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  }).format(parsed);
+}
+
 function renderLogs() {
   const container = document.getElementById('logHistory');
   if (!healthLogs.length) {
@@ -1906,17 +2071,17 @@ function renderLogs() {
   }
   container.innerHTML = healthLogs.map(log => `
     <div class="log-entry">
-      <div class="log-date">${log.date}</div>
-      ${log.gluc ? `<div class="log-row">🩸 ${t('glucoseLabel')}: <strong>${log.gluc} mg/dL</strong></div>` : ''}
-      ${log.symp ? `<div class="log-row">⚠️ ${t('sympLabel')}: ${log.symp}</div>` : ''}
-      ${log.note ? `<div class="log-note">📝 ${log.note}</div>` : ''}
+      <div class="log-date">${escapeHTML(formatLogDate(log))}</div>
+      ${log.gluc ? `<div class="log-row">🩸 ${escapeHTML(t('glucoseLabel'))}: <strong>${escapeHTML(log.gluc)} mg/dL</strong></div>` : ''}
+      ${log.symp ? `<div class="log-row">⚠️ ${escapeHTML(t('sympLabel'))}: ${escapeHTML(log.symp)}</div>` : ''}
+      ${log.note ? `<div class="log-note">📝 ${escapeHTML(log.note)}</div>` : ''}
     </div>`).join('');
 }
 
 function clearLogs() {
   if (!confirm(t('confirmClear'))) return;
   healthLogs = [];
-  localStorage.removeItem('mafer_logs');
+  removeStorage(STORAGE.logs);
   renderLogs();
   renderSparkline();
 }
@@ -1927,8 +2092,12 @@ function clearLogs() {
 function switchTab(tab, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('section-' + tab).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.remove('active');
+    b.removeAttribute('aria-current');
+  });
   btn.classList.add('active');
+  btn.setAttribute('aria-current', 'page');
 }
 
 /* ============================================================
@@ -1958,27 +2127,29 @@ function openSwap(mealType, day) {
     lang === 'en' ? 'Meal swap options' : 'Alternativer';
 
   document.getElementById('swapOptions').innerHTML = options.map((opt, i) =>
-    `<div class="swap-option" onclick="applySwap(${i})">${opt}</div>`
+    `<button type="button" class="swap-option" onclick="applySwap(${i})">${escapeHTML(opt)}</button>`
   ).join('');
 
   document.getElementById('swapCloseBtn').textContent =
     lang === 'es' ? 'Cerrar' : lang === 'en' ? 'Close' : 'Lukk';
 
-  document.getElementById('swapPanel').classList.add('open');
+  const panel = document.getElementById('swapPanel');
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
   document.getElementById('swapOverlay').classList.add('open');
+  panel.querySelector('.swap-option')?.focus();
 }
 
 function applySwap(optionIndex) {
   if (!swapContext) return;
-  const { mealType, day } = swapContext;
+  const { mealType } = swapContext;
   const baseType = mealType.replace(/d\d+_/, '');
   const options = SWAPS[baseType]?.[lang] || SWAPS[baseType]?.['es'];
-  if (!options) return;
+  if (!options || !Number.isInteger(optionIndex) || !options[optionIndex]) return;
 
   // Store swap override
-  let swapOverrides = JSON.parse(localStorage.getItem('mafer_swaps') || '{}');
   swapOverrides[mealType] = optionIndex;
-  localStorage.setItem('mafer_swaps', JSON.stringify(swapOverrides));
+  saveJSON(STORAGE.swaps, swapOverrides);
 
   closeSwap();
   renderPlan();
@@ -1986,10 +2157,16 @@ function applySwap(optionIndex) {
 }
 
 function closeSwap() {
-  document.getElementById('swapPanel').classList.remove('open');
+  const panel = document.getElementById('swapPanel');
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
   document.getElementById('swapOverlay').classList.remove('open');
   swapContext = null;
 }
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && swapContext) closeSwap();
+});
 
 /* ============================================================
    APPLE HEALTH XML IMPORT
@@ -2006,6 +2183,7 @@ function importAppleHealth(input) {
     try {
       const parser = new DOMParser();
       const doc = parser.parseFromString(xmlText, 'text/xml');
+      if (doc.querySelector('parsererror')) throw new Error('Invalid XML');
 
       // Apple Health glucose identifiers
       const glucoseTypes = [
@@ -2025,7 +2203,9 @@ function importAppleHealth(input) {
 
           if (!isNaN(mgdl) && mgdl > 0 && dateStr) {
             const d = new Date(dateStr);
+            if (Number.isNaN(d.getTime())) return;
             records.push({
+              timestamp: d.toISOString(),
               date: d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
               gluc: String(mgdl),
               symp: '',
@@ -2042,13 +2222,18 @@ function importAppleHealth(input) {
         return;
       }
 
-      // Sort newest first, deduplicate by date+value
-      records.sort((a, b) => new Date(b.date) - new Date(a.date));
-      const existingKeys = new Set(healthLogs.map(l => l.date + l.gluc));
-      const newRecords = records.filter(r => !existingKeys.has(r.date + r.gluc));
+      // Sort newest first and deduplicate using the locale-independent timestamp.
+      records.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+      const seenKeys = new Set(healthLogs.map(l => `${l.timestamp || l.date}|${l.gluc}`));
+      const newRecords = records.filter(record => {
+        const key = `${record.timestamp}|${record.gluc}`;
+        if (seenKeys.has(key)) return false;
+        seenKeys.add(key);
+        return true;
+      });
 
       healthLogs = [...newRecords, ...healthLogs];
-      localStorage.setItem('mafer_logs', JSON.stringify(healthLogs));
+      saveJSON(STORAGE.logs, healthLogs);
       renderLogs();
       renderSparkline();
 
@@ -2065,16 +2250,20 @@ function importAppleHealth(input) {
     }
   };
 
-  if (file.name.endsWith('.xml')) {
+  if (file.name.toLowerCase().endsWith('.xml')) {
     const reader = new FileReader();
     reader.onload = e => processXML(e.target.result);
+    reader.onerror = () => {
+      status.style.color = '#FF6B6B';
+      status.textContent = lang === 'es' ? '❌ Error al leer el archivo' :
+                           lang === 'en' ? '❌ Could not read file' : '❌ Kunne ikke lese filen';
+    };
     reader.readAsText(file);
-  } else if (file.name.endsWith('.zip')) {
-    // For ZIP: user needs to extract and upload the export.xml inside
-    status.style.color = '#FF9F0A';
-    status.textContent = lang === 'es' ? '💡 Extrae el ZIP y sube el archivo export.xml' :
-                         lang === 'en' ? '💡 Unzip it and upload the export.xml file' :
-                         '💡 Pakk ut ZIP og last opp export.xml';
+  } else {
+    status.style.color = '#FF6B6B';
+    status.textContent = lang === 'es' ? '⚠️ Selecciona el archivo export.xml' :
+                         lang === 'en' ? '⚠️ Select the export.xml file' :
+                         '⚠️ Velg export.xml-filen';
   }
 }
 
@@ -2086,7 +2275,7 @@ let pwaPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   pwaPrompt = e;
-  const dismissed = localStorage.getItem('mafer_pwa_dismissed');
+  const dismissed = readStorage(STORAGE.pwaDismissed);
   if (!dismissed) {
     document.getElementById('pwaBanner').classList.add('show');
   }
@@ -2098,14 +2287,14 @@ function installPWA() {
   pwaPrompt.userChoice.then(result => {
     if (result.outcome === 'accepted') {
       document.getElementById('pwaBanner').classList.remove('show');
-      localStorage.setItem('mafer_pwa_dismissed', '1');
+      writeStorage(STORAGE.pwaDismissed, '1');
     }
   });
 }
 
 function dismissPWA() {
   document.getElementById('pwaBanner').classList.remove('show');
-  localStorage.setItem('mafer_pwa_dismissed', '1');
+  writeStorage(STORAGE.pwaDismissed, '1');
 }
 
 window.addEventListener('appinstalled', () => {
@@ -2123,9 +2312,11 @@ if ('serviceWorker' in navigator) {
    BOOT
    ============================================================ */
 // Restore lang button state from saved preference
-document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-const savedLangBtn = document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`);
-if (savedLangBtn) savedLangBtn.classList.add('active');
+document.querySelectorAll('.lang-btn').forEach(button => {
+  const isActive = button.dataset.lang === lang;
+  button.classList.toggle('active', isActive);
+  button.setAttribute('aria-pressed', String(isActive));
+});
 
 init();
 </script>

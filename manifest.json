@@ -2,7 +2,9 @@
   "name": "Plan Mafer",
   "short_name": "Plan Mafer",
   "description": "Tu plan nutricional diario — 1300 kcal · Sin Gluten · Low FODMAP",
-  "start_url": "./index.html",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1B4332",
@@ -23,5 +25,5 @@
     }
   ],
   "categories": ["health", "lifestyle", "food"],
-  "screenshots": []
+  "prefer_related_applications": false
 }

@@ -1,0 +1,9 @@
+{
+  "name": "mafers-foodplan",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Plan nutricional de 10 días instalable como PWA.",
+  "scripts": {
+    "test": "node --test static.test.mjs"
+  }
+}

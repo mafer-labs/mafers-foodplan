@@ -40,3 +40,11 @@ test('basic resilience and accessibility protections remain enabled', () => {
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /role="progressbar"/);
 });
+
+test('mobile layout respects iPhone safe areas', () => {
+  assert.match(html, /env\(safe-area-inset-top, 0px\)/);
+  assert.match(html, /env\(safe-area-inset-bottom, 0px\)/);
+  assert.match(html, /--nav-total-h:\s+calc\(var\(--nav-h\) \+ var\(--safe-bottom\)\)/);
+  assert.match(html, /height:\s+var\(--nav-total-h\)/);
+  assert.match(html, /padding-bottom:\s+calc\(var\(--nav-total-h\) \+ 16px\)/);
+});

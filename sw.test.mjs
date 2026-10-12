@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 function worker() {
   const events={},deleted=[],added=[];
   const cache={addAll:async files=>added.push(...files),match:async url=>({url,cached:true})};
-  const context=vm.createContext({URL,Request,Set,Promise,caches:{open:async()=>cache,keys:async()=>['other-app','plan-mafer-v2','plan-mafer-v3','plan-mafer-v4','plan-mafer-v5','plan-mafer-v6'],delete:async key=>deleted.push(key)},
+  const context=vm.createContext({URL,Request,Set,Promise,caches:{open:async()=>cache,keys:async()=>['other-app','plan-mafer-v2','plan-mafer-v3','plan-mafer-v4','plan-mafer-v5','plan-mafer-v6','plan-mafer-v7'],delete:async key=>deleted.push(key)},
     self:{location:{origin:'https://example.com'},registration:{scope:'https://example.com/mafers-foodplan/'},clients:{claim:async()=>{}},addEventListener:(name,fn)=>events[name]=fn},fetch:()=>{throw new Error('offline');}});
   vm.runInContext(readFileSync(new URL('./sw.js',import.meta.url),'utf8'),context);
   return {events,deleted,added};
@@ -19,7 +19,7 @@ test('worker installation atomically precaches all split app files',async()=>{
 test('worker activation only removes this app older caches',async()=>{
   const w=worker();let completion;
   w.events.activate({waitUntil:p=>completion=p});await completion;
-  assert.deepEqual(w.deleted,['plan-mafer-v2','plan-mafer-v3','plan-mafer-v4','plan-mafer-v5']);
+  assert.deepEqual(w.deleted,['plan-mafer-v2','plan-mafer-v3','plan-mafer-v4','plan-mafer-v5','plan-mafer-v6']);
 });
 test('offline navigation and script requests return the installed scoped shell',async()=>{
   const w=worker();let response;

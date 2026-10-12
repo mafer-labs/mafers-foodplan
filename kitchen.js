@@ -1,6 +1,6 @@
 /* Kitchen, data portability and health editor UI. No server or runtime dependencies. */
 const EXTRA = {
-  yourWeek:['Tu semana','Your week','Uken din'],adjustWeek:['Cambiar fecha, personas o días','Change date, people or days','Endre dato, personer eller dager'],selectedDays:['días','days','dager'],portionGuide:['Cómo contar las porciones','How portions work','Slik telles porsjoner'],viewMeals:['Ver comidas del día','View meals for this day','Vis dagens måltider'],
+  person:['persona','person','person'],yourWeek:['Tu semana','Your week','Uken din'],adjustWeek:['Cambiar fecha, personas o días','Change date, people or days','Endre dato, personer eller dager'],selectedDays:['días','days','dager'],portionGuide:['Cómo contar las porciones','How portions work','Slik telles porsjoner'],viewMeals:['Ver comidas del día','View meals for this day','Vis dagens måltider'],
   kitchen:['Cocina','Kitchen','Kjøkken'],intro:['Planifica la semana, prepara el fin de semana y usa tu congelador.','Plan your week, prepare on the weekend and use your freezer.','Planlegg uken, forbered i helgen og bruk fryseren.'],
   weekStart:['Fecha de la primera comida','First meal date','Dato for første måltid'],people:['Personas','People','Personer'],chooseDays:['Selecciona los días del plan; se programan en orden.','Choose plan days; they are scheduled in order.','Velg plandager; de planlegges i rekkefølge.'],
   prep:['Preparación','Weekend prep','Helgeforberedelser'],shopping:['Compras','Shopping','Innkjøp'],freezer:['Congelador','Freezer','Fryser'],
@@ -129,7 +129,7 @@ function renderKitchen() {
   applyExtraLanguage();
   document.getElementById('weekStart').value=kitchen.start;
   document.getElementById('people').value=kitchen.people;
-  document.getElementById('planningSummary').textContent=prettyDate(kitchen.start)+' · '+kitchen.people+' '+ui('people').toLowerCase()+' · '+kitchen.days.length+' '+ui('selectedDays');
+  document.getElementById('planningSummary').textContent=prettyDate(kitchen.start)+' · '+kitchen.people+' '+ui(kitchen.people===1?'person':'people').toLowerCase()+' · '+kitchen.days.length+' '+ui('selectedDays');
   document.getElementById('prepDays').innerHTML=Array.from({length:10},(_,i)=>i+1).map(d=>`<button type="button" aria-pressed="${kitchen.days.includes(d)}" onclick="togglePrepDay(${d})">${escapeHTML(t('day'))} ${d}</button>`).join('');
   document.querySelectorAll('[data-view]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.view===activeKitchenView)));
   const content=document.getElementById('kitchenContent');

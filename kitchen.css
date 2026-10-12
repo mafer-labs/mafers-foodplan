@@ -1,5 +1,7 @@
 .kitchen-intro { margin: 8px 0 20px; color: var(--text-mid); }
-.kitchen-grid { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+.kitchen-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start; }
+.kitchen-grid > label { min-width:0; }
+.kitchen-grid > label > span { display:block;margin-bottom:8px; }
 #section-kitchen label,.editor-dialog label { display:block;margin:12px 0; font-weight:700; }
 #section-kitchen input:not([type=checkbox]),#section-kitchen select,.editor-dialog input:not([type=checkbox]),.editor-dialog select,.editor-dialog textarea,#glucoseUnit { width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text);font:inherit;min-width:0; }
 .day-picker,.actions,.kitchen-tabs { display:flex;flex-wrap:wrap;gap:8px;margin:12px 0; }
@@ -29,4 +31,8 @@ summary {cursor:pointer;font-weight:800;padding:8px 0;}
 .file-label {border:1px dashed var(--border);padding:12px;border-radius:10px;}
 .nav-btn {padding:8px 4px;}
 @media(min-width:700px) {.section,header>div {max-width:800px;margin-left:auto;margin-right:auto;}nav {justify-content:center;} .nav-btn {max-width:180px;} }
+@media(max-width:599px) {
+  .kitchen-grid {grid-template-columns:minmax(0,1fr);gap:0;}
+  #section-kitchen input:not([type=checkbox]),#section-kitchen select,.editor-dialog input:not([type=checkbox]),.editor-dialog select,.editor-dialog textarea {display:block;max-width:100%;min-height:44px;font-size:16px;}
+}
 @media(prefers-reduced-motion:reduce) {* {animation:none!important;transition:none!important;scroll-behavior:auto!important;}}

@@ -1,5 +1,5 @@
 /* Versioned, complete app shell. Keep unrelated origin caches intact. */
-const CACHE_NAME='plan-mafer-v3';
+const CACHE_NAME='plan-mafer-v4';
 const LOCAL_SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
   './styles.css','./kitchen.css','./core.js','./translations.js','./meal-data.js',
   './planning-data.js','./app.js','./kitchen.js','./bootstrap.js'];

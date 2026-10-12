@@ -1,104 +1,27 @@
-/* ============================================================
-   PLAN MAFER — Service Worker
-   Caches the app shell for full offline support.
-   Version: bump CACHE_NAME to force update on deploy.
-   ============================================================ */
-
-const CACHE_NAME = 'plan-mafer-v2';
-
-// Local files are cached atomically; optional remote assets cannot break install.
-const LOCAL_SHELL = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
-];
-
-const FONT_STYLESHEET = 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap';
-
-// Install: cache the app shell
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(LOCAL_SHELL).then(() => cache.add(FONT_STYLESHEET).catch(() => undefined));
-    }).then(() => self.skipWaiting())
-  );
+/* Versioned, complete app shell. Keep unrelated origin caches intact. */
+const CACHE_NAME='plan-mafer-v3';
+const LOCAL_SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
+  './styles.css','./kitchen.css','./core.js','./translations.js','./meal-data.js',
+  './planning-data.js','./app.js','./kitchen.js','./bootstrap.js'];
+self.addEventListener('install',event=>{
+  event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(LOCAL_SHELL)));
+  // Activate after old tabs close: avoid mixing old HTML with new scripts.
 });
-
-// Activate: delete old caches
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
+self.addEventListener('activate',event=>{
+  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('plan-mafer-')&&key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));
 });
-
-// Fetch: cache-first for app shell, network-first for everything else
-self.addEventListener('fetch', event => {
-  // Only handle GET requests
-  if (event.request.method !== 'GET') return;
-
-  const url = new URL(event.request.url);
-
-  // Navigations use the network when available and fall back to the app shell.
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          if (response.ok) {
-            caches.open(CACHE_NAME).then(cache => cache.put('./index.html', response.clone()));
-          }
-          return response;
-        })
-        .catch(() => caches.match('./index.html'))
-    );
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET')return;
+  const url=new URL(event.request.url);
+  if(url.origin!==self.location.origin)return;
+  const shellURL=new URL('./index.html',self.registration.scope).href;
+  if(event.request.mode==='navigate'){
+    // The shell and scripts come from the same installed version.
+    event.respondWith(caches.open(CACHE_NAME).then(async cache=>
+      (await cache.match(shellURL)) || fetch(event.request)));
     return;
   }
-
-  // App shell files → cache first
-  if (url.origin === self.location.origin &&
-      (url.pathname.endsWith('index.html') ||
-       url.pathname.endsWith('manifest.json') ||
-       url.pathname.endsWith('icon-192.png') ||
-       url.pathname.endsWith('icon-512.png'))) {
-    event.respondWith(
-      caches.match(event.request).then(cached => {
-        const networkFetch = fetch(event.request).then(response => {
-          if (response.ok) {
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
-          }
-          return response;
-        }).catch(() => cached);
-        return cached || networkFetch;
-      })
-    );
-    return;
-  }
-
-  // Google Fonts → cache first, fallback gracefully
-  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-    event.respondWith(
-      caches.match(event.request).then(cached => cached ||
-        fetch(event.request).then(response => {
-          if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
-          return response;
-        }).catch(() => new Response('', { status: 504, statusText: 'Offline' }))
-      )
-    );
-    return;
-  }
-
-  // Everything else → network with cache fallback
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response.ok && url.origin === self.location.origin) {
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
-        }
-        return response;
-      })
-      .catch(() => caches.match(event.request))
-  );
+  const shell=new Set(LOCAL_SHELL.map(file=>new URL(file,self.registration.scope).href));
+  if(shell.has(url.href))event.respondWith(caches.open(CACHE_NAME).then(async cache=>
+    (await cache.match(event.request)) || fetch(event.request)));
 });

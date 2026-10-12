@@ -173,13 +173,14 @@
 <section class="section" id="section-kitchen" aria-labelledby="kitchenHeading">
   <h1 id="kitchenHeading" data-ui="kitchen">Kitchen</h1>
   <p class="kitchen-intro" data-ui="intro">Plan your week, prepare on the weekend and use what is in your freezer.</p>
-  <div class="card">
+  <details class="card plan-settings">
+    <summary><span data-ui="yourWeek">Your week</span><span id="planningSummary" class="planning-summary"></span><span class="settings-hint" data-ui="adjustWeek">Adjust dates and days</span></summary>
     <div class="kitchen-grid">
       <label><span data-ui="weekStart">First meal date</span><input type="date" id="weekStart" onchange="savePlanning()"></label>
       <label><span data-ui="people">People</span><input type="number" id="people" min="1" max="20" value="1" onchange="savePlanning()"></label>
     </div>
     <p data-ui="chooseDays">Choose days from your 10-day plan, in order.</p><div id="prepDays" class="day-picker"></div>
-  </div>
+  </details>
   <div class="kitchen-tabs" aria-label="Kitchen views">
     <button type="button" data-view="prep" onclick="kitchenView('prep')" data-ui="prep">Weekend prep</button>
     <button type="button" data-view="shopping" onclick="kitchenView('shopping')" data-ui="shopping">Shopping</button>

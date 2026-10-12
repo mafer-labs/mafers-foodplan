@@ -1,5 +1,6 @@
 /* Kitchen, data portability and health editor UI. No server or runtime dependencies. */
 const EXTRA = {
+  yourWeek:['Tu semana','Your week','Uken din'],adjustWeek:['Cambiar fecha, personas o días','Change date, people or days','Endre dato, personer eller dager'],selectedDays:['días','days','dager'],portionGuide:['Cómo contar las porciones','How portions work','Slik telles porsjoner'],viewMeals:['Ver comidas del día','View meals for this day','Vis dagens måltider'],
   kitchen:['Cocina','Kitchen','Kjøkken'],intro:['Planifica la semana, prepara el fin de semana y usa tu congelador.','Plan your week, prepare on the weekend and use your freezer.','Planlegg uken, forbered i helgen og bruk fryseren.'],
   weekStart:['Fecha de la primera comida','First meal date','Dato for første måltid'],people:['Personas','People','Personer'],chooseDays:['Selecciona los días del plan; se programan en orden.','Choose plan days; they are scheduled in order.','Velg plandager; de planlegges i rekkefølge.'],
   prep:['Preparación','Weekend prep','Helgeforberedelser'],shopping:['Compras','Shopping','Innkjøp'],freezer:['Congelador','Freezer','Fryser'],
@@ -128,6 +129,7 @@ function renderKitchen() {
   applyExtraLanguage();
   document.getElementById('weekStart').value=kitchen.start;
   document.getElementById('people').value=kitchen.people;
+  document.getElementById('planningSummary').textContent=prettyDate(kitchen.start)+' · '+kitchen.people+' '+ui('people').toLowerCase()+' · '+kitchen.days.length+' '+ui('selectedDays');
   document.getElementById('prepDays').innerHTML=Array.from({length:10},(_,i)=>i+1).map(d=>`<button type="button" aria-pressed="${kitchen.days.includes(d)}" onclick="togglePrepDay(${d})">${escapeHTML(t('day'))} ${d}</button>`).join('');
   document.querySelectorAll('[data-view]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.view===activeKitchenView)));
   const content=document.getElementById('kitchenContent');
@@ -141,13 +143,13 @@ function renderPrep(totals,coverage) {
   const fresh=Object.keys(totals).filter(id=>!INGREDIENTS[id][3]);
   const tasks=freeze.map(id=>{
     const c=coverage[id];
-    return `<div class="prep-row"><strong>${escapeHTML(ingredient(id))}</strong><p class="prep-meta">${ui('needed')}: ${c.needed} · ${ui('inStock')}: ${c.available} · ${ui('prepare')}: ${c.remaining}</p>${c.remaining?`<button type="button" class="prep-action" onclick="openBatch(null,'${id}',${c.remaining})">${ui('freezeNow')}</button>`:`<span class="stock-badge">${ui('fullCoverage')}</span>`}</div>`;
+    return `<div class="prep-row"><h3>${escapeHTML(ingredient(id))}</h3><dl class="prep-counts"><div><dt>${ui('needed')}</dt><dd>${c.needed}</dd></div><div><dt>${ui('inStock')}</dt><dd>${c.available}</dd></div><div class="count-remaining"><dt>${ui('prepare')}</dt><dd>${c.remaining}</dd></div></dl>${c.remaining?`<button type="button" class="prep-action" onclick="openBatch(null,'${id}',${c.remaining})">${ui('freezeNow')}</button>`:`<span class="stock-badge">${ui('fullCoverage')}</span>`}</div>`;
   }).join('');
   const schedule=buildSchedule(coverage);
   const first=new Date(kitchen.start+'T12:00:00');
   const sunday=addDateDays(kitchen.start,-(first.getDay()||7));
   const saturday=addDateDays(sunday,-1);
-  return `<p class="prep-meta">${ui('portionHelp')}</p><div class="card"><h2>${ui('saturday')} · ${escapeHTML(prettyDate(saturday))}</h2>${checklist('saturday',ui('saturdayTask'))}</div><div class="card"><h2>${ui('sunday')} · ${escapeHTML(prettyDate(sunday))}</h2><p>${ui('sundayTask')}</p>${tasks}</div><div class="card"><h2>${ui('fresh')}</h2><p>${ui('freshHelp')}</p><p class="prep-meta">${fresh.map(ingredient).map(escapeHTML).join(' · ')}</p></div><div class="card"><h2>${ui('schedule')}</h2>${schedule}</div>${safetyCard()}`;
+  return `<details class="portion-guide"><summary>${ui('portionGuide')}</summary><p>${ui('portionHelp')}</p></details><div class="card"><h2>${ui('saturday')}</h2><p class="prep-date">${escapeHTML(prettyDate(saturday))}</p>${checklist('saturday',ui('saturdayTask'))}</div><div class="card"><h2>${ui('sunday')}</h2><p class="prep-date">${escapeHTML(prettyDate(sunday))}</p><p>${ui('sundayTask')}</p>${tasks}</div><div class="card"><h2>${ui('fresh')}</h2><p>${ui('freshHelp')}</p><ul class="fresh-list">${fresh.map(id=>'<li>'+escapeHTML(ingredient(id))+'</li>').join('')}</ul></div><div class="card"><h2>${ui('schedule')}</h2>${schedule}</div>${safetyCard()}`;
 }
 function addDateDays(date,n) {const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+n);return localDateKey(d);}
 function prettyDate(date) {return new Intl.DateTimeFormat({es:'es',en:'en',no:'nb'}[lang],{weekday:'short',month:'short',day:'numeric'}).format(new Date(date+'T12:00:00'));}
@@ -166,7 +168,7 @@ function buildSchedule(coverage) {
       }
       if(need)used.push(`${ingredient(id)} × ${need} — ${ui('prepare')}`);
     }
-    return `<div class="prep-row"><h3>${escapeHTML(prettyDate(date))} · ${t('day')} ${day}</h3>${used.length?`<p class="prep-meta">${ui('thaw')} (${escapeHTML(prettyDate(addDateDays(date,-1)))}):</p><p>${used.map(escapeHTML).join(' · ')}</p>`:''}<p class="prep-meta">${['b','l','d'].map(type=>escapeHTML(mealText(day,type))).join('<br>')}</p><button type="button" class="prep-action" onclick="openPlanDay(${day})">${ui('original')} ${day}</button></div>`;
+    return `<div class="prep-row"><h3>${escapeHTML(prettyDate(date))} · ${t('day')} ${day}</h3>${used.length?`<p class="prep-meta">${ui('thaw')} (${escapeHTML(prettyDate(addDateDays(date,-1)))}):</p><ul class="thaw-list">${used.map(text=>'<li>'+escapeHTML(text)+'</li>').join('')}</ul>`:''}<details class="daily-meals"><summary>${ui('viewMeals')}</summary>${['b','l','d'].map(type=>'<p>'+escapeHTML(mealText(day,type))+'</p>').join('')}</details><button type="button" class="prep-action" onclick="openPlanDay(${day})">${ui('original')} ${day}</button></div>`;
   }).join('');
 }
 function openPlanDay(day){goToDay(day);switchTab('plan',document.getElementById('nav-plan'));window.scrollTo({top:0,behavior:'smooth'});}

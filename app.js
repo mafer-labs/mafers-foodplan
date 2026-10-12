@@ -500,6 +500,7 @@ function clearLogs() {
    TAB SWITCHER
    ============================================================ */
 function switchTab(tab, btn) {
+  document.documentElement.setAttribute('data-tab', tab);
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('section-' + tab).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => {
@@ -508,6 +509,7 @@ function switchTab(tab, btn) {
   });
   btn.classList.add('active');
   btn.setAttribute('aria-current', 'page');
+  window.scrollTo({top:0,behavior:'instant'});
 }
 
 /* ============================================================
